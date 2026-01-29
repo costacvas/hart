@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>HART - iPhone Edition v10.19</title>
+    <title>HART - iPhone Edition v10.20</title>
     
     <link rel="manifest" href="manifest.json">
 
@@ -15,12 +15,11 @@
             --active: #00f2ff; 
             --gold: #f1c40f; 
             
-            /* Dimensiuni Cărți MASA (Table) - Controlabile */
+            /* Dimensiuni */
             --table-card-w: 10vh; 
             --table-card-h: 14vh;
             --table-font-size: 3.5vh; 
 
-            /* Dimensiuni Cărți MANA (Hand) - Controlabile */
             --hand-card-w: 11vh; 
             --hand-card-h: 15.4vh; 
             --hand-font-scale: 1.0; 
@@ -38,7 +37,7 @@
         .setting-row select, .setting-row input { background: #333; border: 1px solid var(--gold); color: white; padding: 5px; border-radius: 5px; width: 110px; text-align: center; }
         .start-btn { background: var(--active); color: black; width: 100%; padding: 12px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
         
-        /* CONTROALE COLTURI */
+        /* CONTROALE */
         .corner-controls { position: absolute; z-index: 4000; display: flex; gap: 5px; }
         #ctrl-bottom-left { bottom: 10px; left: 10px; }
         #ctrl-bottom-right { bottom: 10px; right: 10px; }
@@ -71,7 +70,10 @@
             background: rgba(0,0,0,0.4); border: 2px solid #555; border-radius: 20px;
             padding: 15px 35px; display: none; flex-direction: column; align-items: center;
             transition: all 0.3s ease; z-index: 200;
+            pointer-events: none; /* FIX: Lăsăm click-urile să treacă prin containerul gol */
         }
+        #my-player-zone > * { pointer-events: auto; } /* Reactivăm click doar pe conținut */
+
         .active-turn { border-color: var(--active) !important; box-shadow: 0 0 25px var(--active); background: rgba(0,0,0,0.8) !important; z-index: 210 !important; }
         #my-player-zone.active-turn { transform: translateX(-50%) scale(1.02); }
         .pos-top.active-turn, .pos-left.active-turn, .pos-right.active-turn { transform: scale(1.1); }
@@ -83,7 +85,7 @@
         .mini-cards-container { display:flex; gap:2px; justify-content:center; margin-top:4px; height: 26px; }
         .card-mini { width: 16px; height: 24px; background: linear-gradient(135deg, #c0392b 0%, #7e1910 100%); border: 1px solid white; border-radius: 3px; box-shadow: 1px 1px 3px black; }
 
-        /* CĂRȚI MASA */
+        /* CĂRȚI */
         .card { 
             width: var(--table-card-w); height: var(--table-card-h); 
             background: white; border-radius: 8px; 
@@ -92,6 +94,7 @@
             box-shadow: 3px 3px 8px rgba(0,0,0,0.6); 
             position: relative; transition: transform 0.2s; user-select: none; cursor: grab;
             overflow: hidden; flex-shrink: 0;
+            touch-action: none; /* FIX: Important pentru Drag pe mobil */
         }
         .card.back { background: linear-gradient(135deg, #c0392b 0%, #7e1910 100%); border: 2px solid white; color: transparent !important; cursor: default; }
         .card.absolute { position: absolute !important; }
@@ -103,26 +106,25 @@
         .suit-black { color: black !important; }
         .card .pts { position: absolute; bottom: 4px; font-size: 0.35em; color: #3498db; width: 100%; text-align: center; font-weight: normal; }
 
-        /* CĂRȚI MÂNĂ */
         .hand-cards { display: flex; gap: -5px; height: auto; align-items: flex-end; justify-content: center; width: auto; min-width: 100%; }
         .hand-cards .card { width: var(--hand-card-w); height: var(--hand-card-h); font-size: calc(4vh * var(--hand-font-scale)); cursor: pointer; border: 1px solid #ccc; }
 
-        /* BUTOANE JOC (Z-INDEX MARE + POZITIE SIGURA) */
+        /* BUTOANE JOC - Z-INDEX MAXIM */
         .action-btn { 
-            position: absolute; bottom: 25%; /* Coborat mai jos sa fie sigur */
-            z-index: 500; /* Peste orice altceva */
+            position: absolute; bottom: 30%; 
+            z-index: 6000; /* FIX: Deasupra la orice */
             color:white; padding:12px 24px; border:none; border-radius:30px; 
             font-weight:bold; cursor:pointer; font-size: 15px; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.6); 
+            pointer-events: auto; /* Asigură click */
         }
-        .btn-hart { left: 2%; background:#e74c3c; } 
-        .btn-play { right: 2%; background:#27ae60; } 
+        .btn-hart { left: 5%; background:#e74c3c; } 
+        .btn-play { right: 5%; background:#27ae60; } 
         .action-btn:disabled { opacity: 0.4; filter: grayscale(1); transform: scale(0.95); pointer-events: none; }
 
         .deck-count { position: absolute; top: -20px; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: white; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 10px; }
         .mult-badge { position: absolute; top: -10px; right: -10px; background: var(--gold); color: black; border-radius: 50%; width: 24px; height: 24px; display: none; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #000; z-index: 120; font-size: 12px; }
 
-        /* FIX REZULTATE */
         .result-card { display: inline-flex; width: 30px; height: 28px; background: white; border-radius: 4px; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; margin-right: 2px; border: 1px solid #999; vertical-align: middle; }
 
         #hart-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:4000; justify-content:center; align-items:center; }
@@ -132,7 +134,9 @@
         .flying-card { position: fixed; z-index: 9999; transition: all 0.6s ease-in-out; box-shadow: 0 10px 30px rgba(0,0,0,0.8); pointer-events: none; }
         #rejected-pile-container { position: absolute; top: 35%; left: 25%; width: var(--card-w); height: var(--card-h); pointer-events: none; z-index: 10; transform: rotate(-15deg); }
 
-        #center-cluster { display: none; flex-direction: row; align-items: center; justify-content: center; gap: 15px; margin-top: -30px; }
+        #center-cluster { display: none; flex-direction: row; align-items: center; justify-content: center; gap: 15px; margin-top: -30px; pointer-events: none; } /* FIX: Cluster nu fura click */
+        #center-cluster > * { pointer-events: auto; }
+        
         .slot { position: relative; width: var(--table-card-w); height: var(--table-card-h); display:flex; justify-content:center; align-items:center; }
         #trump-slot { transform: rotate(-5deg); margin-right: 5px; } 
         #staging-slot { margin-left: 5px; transform: rotate(5deg); }
@@ -292,11 +296,20 @@
             d.innerHTML = `${c.v}${c.s} <div class="pts">${getPts(c)}p</div>`;
             if(c.lockedInTurn) d.innerHTML += `<div style="position:absolute; top:-5px; right:-5px">🔒</div>`;
             d.onclick = () => toggleSelection(c.id);
+            // Re-adding Drag handlers
+            d.setAttribute('draggable', true);
+            d.addEventListener('dragstart', (e) => handleDragStart(e, index));
+            d.addEventListener('dragover', handleDragOver);
+            d.addEventListener('drop', (e) => handleDrop(e, index));
+            d.addEventListener('dragend', handleDragEnd);
+            // Touch
+            d.addEventListener('touchstart', (e) => handleTouchStart(e, index), {passive: false});
+            d.addEventListener('touchmove', (e) => handleTouchMove(e), {passive: false});
+            d.addEventListener('touchend', (e) => handleTouchEnd(e, index));
             row.appendChild(d);
         });
 
         const pBtn = document.getElementById('play-btn');
-        // FIX: Ensure button is enabled only when valid
         pBtn.disabled = (selectedIds.length === 0 || hasPlayed || players[turnIdx].isBot);
         const hBtn = document.getElementById('hart-btn');
         if(turnIdx === 0 && !hasPlayed && !hasDrawn && !players[0].isBot) { hBtn.disabled = false; hBtn.style.opacity = '1'; } else { hBtn.disabled = true; hBtn.style.opacity = '0.5'; }
@@ -355,7 +368,6 @@
                 if(discardStack.length > 1) { const t = discardStack.pop(); masterDeck = discardStack.reverse(); discardStack = [t]; } 
             } 
             nC = masterDeck.shift(); 
-            // FIX: Daca pachetul e gol, nu crapam
             if(nC) pickAnimation(nC, 0, false);
         } 
         if(nC) players[0].hand.push(nC); 
@@ -380,18 +392,37 @@
         }, 600);
     }
 
+    // FIX AUTO-PLAY LOGIC
     function handleTimeout() { 
         if(turnIdx===0){ 
+            // 1. Force Play if not played
             if(!hasPlayed) {
-                // FIX: Daca nu are carti, trage doar
                 if(players[0].hand.length > 0) {
-                    if(selectedIds.length===0){ const s=[...players[0].hand].sort((a,b)=>getPts(b)-getPts(a)); selectedIds=[s[0].id]; } 
+                    if(selectedIds.length===0){ 
+                        const s=[...players[0].hand].sort((a,b)=>getPts(b)-getPts(a)); 
+                        selectedIds=[s[0].id]; 
+                    } 
                     handlePlay(); 
-                } else { hasPlayed = true; } // Hack sa treaca mai departe
-                setTimeout(() => handleDraw(false), 500);
-            } else if(!hasDrawn) { handleDraw(false); }
+                } else { hasPlayed = true; } 
+            }
+            
+            // 2. Force Draw
+            if(!hasDrawn) { 
+                // Bypass "must play" check for timeout safety
+                let nC;
+                if(masterDeck.length === 0 && discardStack.length > 1) {
+                     const t = discardStack.pop(); masterDeck = discardStack.reverse(); discardStack = [t];
+                }
+                nC = masterDeck.shift();
+                if(nC) {
+                    pickAnimation(nC, 0, false);
+                    players[0].hand.push(nC);
+                }
+                hasDrawn = true; 
+                finalizeTurnWithAnimation();
+            }
         } else {
-            // FIX: Daca botul se blocheaza si expira timpul, il fortam
+            // Force bot end turn
             endTurn();
         }
     }
@@ -408,6 +439,11 @@
         document.body.appendChild(flying);
         const targetClass = pIdx === 0 ? 'player-header' : players[pIdx].pos; 
         const targetEl = document.querySelector(pIdx === 0 ? '#my-player-zone' : `.${targetClass}`);
+        // Fallback daca zona nu e vizibila (la start)
+        if(pIdx===0 && targetEl.style.display==='none') {
+             // Nu facem nimic special, lasam rect-ul sa fie calculat
+        }
+        
         const targetRect = targetEl.getBoundingClientRect();
         requestAnimationFrame(() => {
             flying.style.left = (targetRect.left + (pIdx===0? 100 : 20)) + 'px';
@@ -455,6 +491,48 @@
         setTimeout(() => { finalizeTurnWithAnimation(); }, (takeBottom ? CONFIG.revealTime : 800));
     }
 
+    // --- DRAG AND DROP FIX ---
+    let touchStartIndex = null;
+    function handleDragStart(e, index) { 
+        if(players[0].hand[index].lockedInTurn) return;
+        e.dataTransfer.effectAllowed = 'move';
+        draggedItemIndex = index; 
+        e.target.classList.add('dragging'); 
+    }
+    function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+    function handleDrop(e, targetIndex) { 
+        e.preventDefault(); 
+        if (draggedItemIndex === null || draggedItemIndex === targetIndex) return; 
+        const hand = players[0].hand; const [movedItem] = hand.splice(draggedItemIndex, 1); 
+        hand.splice(targetIndex, 0, movedItem); 
+        render(); 
+    }
+    function handleDragEnd(e) { e.target.classList.remove('dragging'); draggedItemIndex = null; }
+
+    function handleTouchStart(e, index) {
+        if(players[0].hand[index].lockedInTurn) return;
+        touchStartIndex = index; e.target.classList.add('dragging');
+    }
+    function handleTouchMove(e) { e.preventDefault(); }
+    function handleTouchEnd(e, index) {
+        e.target.classList.remove('dragging');
+        if(touchStartIndex === null) return;
+        const touch = e.changedTouches[0];
+        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+        const cardEl = targetEl.closest('.card');
+        if (cardEl && cardEl.parentNode.id === 'hand-cards-row') {
+            const children = Array.from(cardEl.parentNode.children);
+            const targetIndex = children.indexOf(cardEl);
+            if (targetIndex !== -1 && targetIndex !== touchStartIndex) {
+                const hand = players[0].hand;
+                const [movedItem] = hand.splice(touchStartIndex, 1);
+                hand.splice(targetIndex, 0, movedItem);
+                render();
+            }
+        }
+        touchStartIndex = null;
+    }
+
     function toggleSelection(id) { 
         if(hasPlayed) return; if(!players[0].hand.find(c => c.id === id)) return; 
         const i = selectedIds.indexOf(id); if(i > -1) selectedIds.splice(i, 1); 
@@ -476,7 +554,16 @@
     }
     
     function revealDealer(deck, idx) { 
-        document.getElementById('setup-layer').style.pointerEvents = 'none'; let res = players.map((p, i) => ({ p, card: deck[(idx + i * 7) % 52], val: VALS.indexOf(deck[(idx + i * 7) % 52].v) })); res.forEach(r => { const c = document.createElement('div'); c.className = 'card absolute'; applyColor(c, r.card); c.innerHTML = `${r.card.v}${r.card.s}`; c.style.left = '50%'; c.style.top = '50%'; document.getElementById('setup-layer').appendChild(c); setTimeout(() => { let targetEl; if(r.p.id === 0) targetEl = document.getElementById('my-player-zone'); else targetEl = document.querySelector(`.${r.p.pos}`); let rect; if(r.p.id === 0 && (!targetEl || targetEl.style.display === 'none')) { rect = { left: window.innerWidth / 2 - 50, top: window.innerHeight - 100 }; } else { rect = targetEl.getBoundingClientRect(); } const tRect = document.getElementById('table-ui').getBoundingClientRect(); c.style.left = (rect.left - tRect.left + 20) + 'px'; c.style.top = (rect.top - tRect.top + 10) + 'px'; c.style.transform = 'rotate(0deg)'; }, 100); }); dealerId = res.sort((a, b) => b.val - a.val)[0].p.id; setTimeout(startTrumpFan, 2500); 
+        document.getElementById('setup-layer').style.pointerEvents = 'none'; let res = players.map((p, i) => ({ p, card: deck[(idx + i * 7) % 52], val: VALS.indexOf(deck[(idx + i * 7) % 52].v) })); res.forEach(r => { const c = document.createElement('div'); c.className = 'card absolute'; applyColor(c, r.card); c.innerHTML = `${r.card.v}${r.card.s}`; c.style.left = '50%'; c.style.top = '50%'; document.getElementById('setup-layer').appendChild(c); setTimeout(() => { 
+            // FIX: Force correct coordinates for player 0 even if element is hidden
+            let rect;
+            if(r.p.id === 0) {
+                 rect = { left: window.innerWidth / 2 - 50, top: window.innerHeight - 150 };
+            } else {
+                 const targetEl = document.querySelector(`.${r.p.pos}`);
+                 rect = targetEl.getBoundingClientRect();
+            }
+            const tRect = document.getElementById('table-ui').getBoundingClientRect(); c.style.left = (rect.left - tRect.left + 20) + 'px'; c.style.top = (rect.top - tRect.top + 10) + 'px'; c.style.transform = 'rotate(0deg)'; }, 100); }); dealerId = res.sort((a, b) => b.val - a.val)[0].p.id; setTimeout(startTrumpFan, 2500); 
     }
     
     function startTrumpFan() { 
