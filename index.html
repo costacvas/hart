@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>HART - iPhone Edition v10.16</title>
+    <title>HART - iPhone Edition v10.17</title>
     
     <link rel="manifest" href="manifest.json">
 
@@ -14,9 +14,16 @@
             --felt: radial-gradient(circle, #14692e 0%, #073d1c 100%); 
             --active: #00f2ff; 
             --gold: #f1c40f; 
-            --card-w: 9vh; 
-            --card-h: 12.6vh; 
-            --font-scale: 1; 
+            
+            /* Dimensiuni Cărți MASA (Table) - Puțin mărite */
+            --table-card-w: 10vh; 
+            --table-card-h: 14vh;
+            --table-font-size: 3.5vh; 
+
+            /* Dimensiuni Cărți MANA (Hand) - Controlabile din butoane */
+            --hand-card-w: 11vh; 
+            --hand-card-h: 15.4vh; 
+            --hand-font-scale: 1.0; /* Multiplicator pentru text */
         }
         
         body { margin: 0; background: #0a0a0a; font-family: 'Segoe UI', sans-serif; color: white; overflow: hidden; height: 100vh; width: 100vw; display: flex; touch-action: none; user-select: none; -webkit-user-select: none; }
@@ -27,23 +34,37 @@
         /* MENIU */
         #main-menu { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .menu-card { background: #1a1a1a; padding: 15px; border-radius: 15px; border: 2px solid var(--gold); width: 85%; max-width: 400px; text-align: center; max-height: 95vh; overflow-y: auto; }
-        .setting-row { margin: 8px 0; display: flex; justify-content: space-between; align-items: center; font-size: calc(14px * var(--font-scale)); }
+        .setting-row { margin: 8px 0; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
         .setting-row select, .setting-row input { background: #333; border: 1px solid var(--gold); color: white; padding: 5px; border-radius: 5px; width: 110px; text-align: center; }
-        .start-btn { background: var(--active); color: black; width: 100%; padding: 12px; border: none; border-radius: 15px; font-weight: bold; font-size: calc(18px * var(--font-scale)); cursor: pointer; margin-top: 10px; }
-        .font-control-container { display: flex; align-items: center; gap: 5px; background: #333; border: 1px solid var(--gold); border-radius: 5px; padding: 2px; }
-        .font-btn { background: var(--gold); color: black; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; display:flex; justify-content:center; align-items:center; }
+        .start-btn { background: var(--active); color: black; width: 100%; padding: 12px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
+        
+        /* CONTROALE COLTURI (TEXT & SIZE) */
+        .corner-controls {
+            position: absolute; bottom: 10px; z-index: 4000;
+            display: flex; gap: 5px;
+        }
+        #ctrl-left { left: 10px; }
+        #ctrl-right { right: 10px; }
+        
+        .ctrl-btn {
+            background: rgba(0,0,0,0.6); border: 1px solid #777; color: white;
+            width: 35px; height: 35px; border-radius: 50%;
+            font-weight: bold; font-size: 12px; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .ctrl-btn:active { background: var(--active); color: black; }
 
         /* MASA DE JOC */
         .game-wrapper { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
         .table { position: relative; width: 100%; height: 100%; background: var(--felt); display: flex; justify-content: center; align-items: center; overflow: hidden; }
         
         /* SCAUNE ADVERSARI */
-        .player-seat { position: absolute; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 12px; text-align: center; min-width: 90px; border: 1px solid #555; z-index: 100; transition: 0.4s; font-size: calc(13px * var(--font-scale)); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .player-seat { position: absolute; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 12px; text-align: center; min-width: 90px; border: 1px solid #555; z-index: 100; transition: 0.4s; font-size: 13px; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .pos-top { top: 2%; left: 50%; transform: translateX(-50%); } 
         .pos-left { left: 2%; top: 30%; transform: translateY(-50%); } 
         .pos-right { right: 2%; top: 30%; transform: translateY(-50%); }
         
-        /* CHENAR JUCĂTOR */
+        /* CHENAR JUCĂTOR - MODIFICAT */
         #my-player-zone {
             position: absolute; 
             bottom: 5px; 
@@ -54,7 +75,7 @@
             background: rgba(0,0,0,0.4); 
             border: 2px solid #555;
             border-radius: 20px;
-            padding: 10px 15px; 
+            padding: 15px 35px; /* Padding mai mare */
             display: none; 
             flex-direction: column; align-items: center;
             transition: all 0.3s ease;
@@ -76,8 +97,9 @@
             width: 100%;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 5px;
-            color: #ddd; font-weight: bold; font-size: calc(14px * var(--font-scale));
-            margin-bottom: 5px;
+            color: #ddd; font-weight: bold; 
+            font-size: 12px; /* Micsorat textul Tu/Scor */
+            margin-bottom: 2px; /* Urcat mai sus */
             text-shadow: 1px 1px 2px black;
             white-space: nowrap;
         }
@@ -85,7 +107,7 @@
         .timer-badge {
             background: #e74c3c; color: white; 
             padding: 2px 8px; border-radius: 8px;
-            font-weight: bold; font-size: calc(14px * var(--font-scale));
+            font-weight: bold; font-size: 12px;
             animation: pulse 1s infinite alternate;
             margin-left: 5px;
             display: inline-block;
@@ -95,11 +117,13 @@
         .mini-cards-container { display:flex; gap:2px; justify-content:center; margin-top:4px; height: 26px; }
         .card-mini { width: 16px; height: 24px; background: linear-gradient(135deg, #c0392b 0%, #7e1910 100%); border: 1px solid white; border-radius: 3px; box-shadow: 1px 1px 3px black; }
 
+        /* STILURI CĂRȚI GENERALE (MASĂ) */
         .card { 
-            width: var(--card-w); height: var(--card-h); 
+            width: var(--table-card-w); height: var(--table-card-h); 
             background: white; border-radius: 8px; 
             display: flex; justify-content: center; align-items: center; 
-            font-weight: bold; font-size: calc(4vh * var(--font-scale)); 
+            font-weight: bold; 
+            font-size: var(--table-font-size); /* Font dinamic masa */
             box-shadow: 3px 3px 8px rgba(0,0,0,0.6); 
             position: relative; transition: transform 0.2s; user-select: none; cursor: grab;
             overflow: hidden; 
@@ -116,25 +140,32 @@
         .suit-black { color: black !important; }
         .card .pts { position: absolute; bottom: 4px; font-size: 0.35em; color: #3498db; width: 100%; text-align: center; font-weight: normal; }
 
-        /* BUTOANE LATERALE */
-        .action-btn { position: absolute; bottom: 35%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: calc(15px * var(--font-scale)); box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
+        /* STILURI CĂRȚI MÂNĂ (SPECIFICE) */
+        .hand-cards { 
+            display: flex; gap: -5px; height: auto; 
+            align-items: flex-end; justify-content: center; 
+            width: auto; min-width: 100%; 
+        }
+        .hand-cards .card { 
+            width: var(--hand-card-w); 
+            height: var(--hand-card-h); 
+            font-size: calc(4vh * var(--hand-font-scale)); /* Font controlabil */
+            cursor: pointer; 
+            border: 1px solid #ccc; 
+        }
+
+        .action-btn { position: absolute; bottom: 35%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
         .btn-hart { left: 2%; background:#e74c3c; } 
         .btn-play { right: 2%; background:#27ae60; } 
         
-        .draw-btn { background:#f39c12; color:white; font-size: calc(11px * var(--font-scale)); border:none; padding:6px 12px; border-radius:15px; cursor:pointer; font-weight: bold; box-shadow: 0 2px 5px black; width: 100%; }
-        .draw-btn:disabled, .action-btn:disabled { opacity: 0.4; filter: grayscale(1); transform: scale(0.95); }
-
-        .hand-cards { display: flex; gap: -5px; height: 17vh; align-items: flex-end; justify-content: center; width: auto; min-width: 100%; }
-        .hand-cards .card { width: 12vh; height: 17vh; font-size: calc(6vh * var(--font-scale)); cursor: pointer; border: 1px solid #ccc; }
-
-        .deck-count { position: absolute; top: -20px; width: 100%; text-align: center; font-size: calc(12px * var(--font-scale)); font-weight: bold; color: white; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 10px; }
+        .deck-count { position: absolute; top: -20px; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: white; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 10px; }
         .mult-badge { position: absolute; top: -10px; right: -10px; background: var(--gold); color: black; border-radius: 50%; width: 24px; height: 24px; display: none; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #000; z-index: 120; font-size: 12px; }
 
         .result-card { display: inline-flex; width: 18px; height: 26px; background: white; border-radius: 3px; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; margin-right: 2px; border: 1px solid #999; vertical-align: middle; }
 
         #hart-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:4000; justify-content:center; align-items:center; }
         #modal-box { background:#1a1a1a; padding:25px; border:3px solid var(--gold); border-radius:25px; text-align:center; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; }
-        #msg { font-size: calc(26px * var(--font-scale)); text-shadow: 0 2px 4px black; margin-bottom: 5px; position:absolute; top: 12%; width:100%; text-align:center; z-index:1600; pointer-events:none; }
+        #msg { font-size: 26px; text-shadow: 0 2px 4px black; margin-bottom: 5px; position:absolute; top: 12%; width:100%; text-align:center; z-index:1600; pointer-events:none; }
         #setup-layer { position: absolute; inset:0; z-index:1500; display:none; pointer-events:auto; }
         
         .flying-card { position: fixed; z-index: 9999; transition: all 0.6s ease-in-out; box-shadow: 0 10px 30px rgba(0,0,0,0.8); pointer-events: none; }
@@ -150,11 +181,9 @@
             margin-top: -30px; 
         }
         
-        .slot { position: relative; width: var(--card-w); height: var(--card-h); display:flex; justify-content:center; align-items:center; }
+        .slot { position: relative; width: var(--table-card-w); height: var(--table-card-h); display:flex; justify-content:center; align-items:center; }
         #trump-slot { transform: rotate(-5deg); margin-right: 5px; } 
         #staging-slot { margin-left: 5px; transform: rotate(5deg); }
-        
-        .btn-holder { position:absolute; bottom:-35px; width:120%; left:-10%; }
         
     </style>
 </head>
@@ -165,26 +194,20 @@
     <div style="font-size: 40px; margin-top:20px;">🔄</div>
 </div>
 
+<div id="ctrl-left" class="corner-controls">
+    <div class="ctrl-btn" onclick="adjustHandText(-0.1)">T-</div>
+    <div class="ctrl-btn" onclick="adjustHandText(0.1)">T+</div>
+</div>
+
+<div id="ctrl-right" class="corner-controls">
+    <div class="ctrl-btn" onclick="adjustHandSize(-1)">C-</div>
+    <div class="ctrl-btn" onclick="adjustHandSize(1)">C+</div>
+</div>
+
 <div id="main-menu">
     <div class="menu-card">
         <h1>HART MOBILE</h1>
-        <div class="setting-row">
-            <span>Mărime Text:</span>
-            <div class="font-control-container">
-                <button class="font-btn" onclick="adjustFont(-1)">-</button>
-                <span id="font-label">Normal</span>
-                <button class="font-btn" onclick="adjustFont(1)">+</button>
-            </div>
-        </div>
-        <div class="setting-row">
-            <span>Timer (sec):</span>
-            <select id="cfg-timer">
-                <option value="15">15s</option>
-                <option value="30" selected>30s</option>
-                <option value="60">60s</option>
-                <option value="0">Fără</option>
-            </select>
-        </div>
+        <div class="setting-row"><span>Timer:</span><select id="cfg-timer"><option value="15">15s</option><option value="30" selected>30s</option><option value="60">60s</option><option value="0">Fără</option></select></div>
         <div class="setting-row"><span>Minim Atu:</span><select id="cfg-min-trump"><option value="0">Toate</option><option value="4">Minim 5</option><option value="9">Minim 10</option></select></div>
         <div class="setting-row"><span>Scor Maxim:</span><input type="number" id="cfg-win-pts" value="300"></div>
         <button class="start-btn" onclick="initGameSession()">JOACĂ ACUM</button>
@@ -210,13 +233,11 @@
             <div id="deck-slot" class="slot">
                 <div id="deck-counter" class="deck-count">0</div>
                 <div id="deck-ui" class="card back absolute" style="position:relative" onclick="handleDraw(false)"></div>
-                <div class="btn-holder"><button id="btn-draw-top" class="draw-btn" onclick="handleDraw(false)">DE SUS</button></div>
             </div>
 
             <div id="bottom-slot" class="slot">
                 <div id="bottom-ui" class="card absolute" style="position:relative" onclick="handleDraw(true)"></div>
                 <div id="mult-badge" class="mult-badge">x1</div>
-                <div class="btn-holder"><button id="btn-draw-bottom" class="draw-btn" onclick="handleDraw(true)">DE JOS</button></div>
             </div>
 
             <div id="staging-slot" class="slot">
@@ -242,7 +263,7 @@
 <div id="hart-modal">
     <div id="modal-box">
         <h2 id="modal-title" style="color:var(--gold); margin-top:0;">REZULTATE</h2>
-        <div id="modal-body" style="font-size: calc(15px * var(--font-scale)); line-height:1.5; margin:20px 0; color:white; text-align:left;"></div>
+        <div id="modal-body" style="font-size: 15px; line-height:1.5; margin:20px 0; color:white; text-align:left;"></div>
         <button id="next-btn" onclick="prepareNextRound()" class="start-btn">URMĂTOAREA RUNDĂ</button>
     </div>
 </div>
@@ -259,20 +280,28 @@
     let dealerId = -1, trumpCard = null, masterDeck = [], discardStack = [], turnIdx = 0, selectedIds = [], hasPlayed = false, hasDrawn = false, moveInterval = null, timeLeft = 0, lastPlayCount = 1;
     let pendingDiscard = [];
     let draggedItemIndex = null, lobbyInterval = null;
-    let currentFontIndex = 1; 
-    const fontSizes = [ { label: 'Mic', scale: 0.85 }, { label: 'Normal', scale: 1.0 }, { label: 'Mare', scale: 1.3 }, { label: 'Gigant', scale: 1.6 } ];
 
-    function adjustFont(dir) {
-        currentFontIndex += dir;
-        if(currentFontIndex < 0) currentFontIndex = 0;
-        if(currentFontIndex >= fontSizes.length) currentFontIndex = fontSizes.length-1;
-        updateFontUI();
+    // --- FUNCTII NOI PENTRU REGLAJ DIMENSIUNI ---
+    let currentHandW = 11;
+    let currentHandH = 15.4;
+    let currentFontScale = 1.0;
+
+    function adjustHandSize(delta) {
+        currentHandW += delta;
+        currentHandH = currentHandW * 1.4; // Menținem aspect ratio
+        if(currentHandW < 5) currentHandW = 5;
+        if(currentHandW > 20) currentHandW = 20;
+        
+        document.documentElement.style.setProperty('--hand-card-w', `${currentHandW}vh`);
+        document.documentElement.style.setProperty('--hand-card-h', `${currentHandH}vh`);
     }
-    function updateFontUI() {
-        document.getElementById('font-label').innerText = fontSizes[currentFontIndex].label;
-        document.documentElement.style.setProperty('--font-scale', fontSizes[currentFontIndex].scale);
+
+    function adjustHandText(delta) {
+        currentFontScale += delta;
+        if(currentFontScale < 0.5) currentFontScale = 0.5;
+        if(currentFontScale > 3.0) currentFontScale = 3.0;
+        document.documentElement.style.setProperty('--hand-font-scale', currentFontScale);
     }
-    window.onload = updateFontUI;
 
     function initGameSession() {
         CONFIG.moveTimerLimit = parseInt(document.getElementById('cfg-timer').value);
@@ -286,7 +315,6 @@
 
     function render() {
         renderSeats();
-        
         const tUI = document.getElementById('trump-ui');
         if(trumpCard) {
             tUI.innerHTML = `${trumpCard.v}${trumpCard.s}`;
@@ -629,7 +657,7 @@
         } 
     }
     function endTurn() { turnIdx = (turnIdx + CONFIG.direction + 4) % 4; startTurn(); }
-    function toggleDrawButtons(e) { document.getElementById('btn-draw-top').disabled = !e; document.getElementById('btn-draw-bottom').disabled = !e || discardStack.length === 0; }
+    function toggleDrawButtons(e) { /* Nu mai avem butoane de toggle */ }
     
     function renderSeats() { 
         document.querySelectorAll('.player-seat').forEach(e => e.remove()); 
@@ -725,12 +753,10 @@
         if (sel.isBot) { 
             const botPick = () => { 
                 let r = Math.floor(Math.random() * 52); 
-                // SAFETY CHECK: Daca cartea a fost deja eliminata (null), incercam din nou
                 if (!masterDeck[r]) {
                     setTimeout(botPick, 100); 
                     return; 
                 }
-
                 if (VALS.indexOf(masterDeck[r].v) < CONFIG.minTrumpIdx) {
                     finalizeTrump(masterDeck[r], area.children[r], r);
                     setTimeout(botPick, 1000); 
@@ -742,8 +768,7 @@
     }
     
     function finalizeTrump(card, el, idx) { 
-        if (!card) return; // EXTRA SAFETY
-
+        if (!card) return;
         if (VALS.indexOf(card.v) < CONFIG.minTrumpIdx) { 
             document.getElementById('msg').innerText = "PREA MICĂ!"; 
             applyColor(el, card); el.innerHTML = `${card.v}${card.s}`; el.classList.remove('back'); el.classList.add('rejected-card');
@@ -773,12 +798,11 @@
         players.forEach(p => p.hand = masterDeck.splice(0, 5)); 
         discardStack = [masterDeck.shift()]; 
         
-        // FIX CRASH: NU MAI APELAM PLAY-AREA
         document.getElementById('hart-btn').style.display = 'block'; 
         document.getElementById('play-btn').style.display = 'block'; 
         
         turnIdx = (dealerId + 1 + 4) % 4; 
-        document.getElementById('msg').innerText = ""; // STERGE MESAJUL 'GAMBLER ALEGE ATU'
+        document.getElementById('msg').innerText = "";
         startTurn(); 
     }
 
