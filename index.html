@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>HART - iPhone Edition v10.18</title>
+    <title>HART - iPhone Edition v10.19</title>
     
     <link rel="manifest" href="manifest.json">
 
@@ -15,12 +15,12 @@
             --active: #00f2ff; 
             --gold: #f1c40f; 
             
-            /* Dimensiuni Cărți MASA (Table) - Controlabile stanga-sus */
+            /* Dimensiuni Cărți MASA (Table) - Controlabile */
             --table-card-w: 10vh; 
             --table-card-h: 14vh;
             --table-font-size: 3.5vh; 
 
-            /* Dimensiuni Cărți MANA (Hand) - Controlabile jos */
+            /* Dimensiuni Cărți MANA (Hand) - Controlabile */
             --hand-card-w: 11vh; 
             --hand-card-h: 15.4vh; 
             --hand-font-scale: 1.0; 
@@ -39,23 +39,15 @@
         .start-btn { background: var(--active); color: black; width: 100%; padding: 12px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
         
         /* CONTROALE COLTURI */
-        .corner-controls {
-            position: absolute; z-index: 4000;
-            display: flex; gap: 5px;
-        }
-        /* Jos Stânga - Text Mână */
+        .corner-controls { position: absolute; z-index: 4000; display: flex; gap: 5px; }
         #ctrl-bottom-left { bottom: 10px; left: 10px; }
-        
-        /* Jos Dreapta - Mărime Mână */
         #ctrl-bottom-right { bottom: 10px; right: 10px; }
-
-        /* NOU: Sus Stânga - Mărime Masă */
         #ctrl-top-left { top: 10px; left: 10px; }
         
         .ctrl-btn {
             background: rgba(0,0,0,0.6); border: 1px solid #777; color: white;
-            width: 35px; height: 35px; border-radius: 50%;
-            font-weight: bold; font-size: 11px; cursor: pointer;
+            width: 40px; height: 40px; border-radius: 50%;
+            font-weight: bold; font-size: 14px; cursor: pointer;
             display: flex; justify-content: center; align-items: center;
             user-select: none;
         }
@@ -74,134 +66,76 @@
         /* CHENAR JUCĂTOR */
         #my-player-zone {
             position: absolute; 
-            bottom: 5px; 
-            left: 50%; transform: translateX(-50%);
-            width: fit-content;
-            min-width: 320px; 
-            max-width: 98vw;
-            background: rgba(0,0,0,0.4); 
-            border: 2px solid #555;
-            border-radius: 20px;
-            padding: 15px 35px;
-            display: none; 
-            flex-direction: column; align-items: center;
-            transition: all 0.3s ease;
-            z-index: 200;
+            bottom: 5px; left: 50%; transform: translateX(-50%);
+            width: fit-content; min-width: 320px; max-width: 98vw;
+            background: rgba(0,0,0,0.4); border: 2px solid #555; border-radius: 20px;
+            padding: 15px 35px; display: none; flex-direction: column; align-items: center;
+            transition: all 0.3s ease; z-index: 200;
         }
-
-        .active-turn { 
-            border-color: var(--active) !important; 
-            box-shadow: 0 0 25px var(--active); 
-            background: rgba(0,0,0,0.8) !important; 
-            z-index: 210 !important;
-        }
-        
-        .pos-left.active-turn, .pos-right.active-turn { transform: translateY(-50%) scale(1.1); }
-        .pos-top.active-turn { transform: translateX(-50%) scale(1.1); }
+        .active-turn { border-color: var(--active) !important; box-shadow: 0 0 25px var(--active); background: rgba(0,0,0,0.8) !important; z-index: 210 !important; }
         #my-player-zone.active-turn { transform: translateX(-50%) scale(1.02); }
+        .pos-top.active-turn, .pos-left.active-turn, .pos-right.active-turn { transform: scale(1.1); }
 
-        .player-header {
-            width: 100%;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 5px;
-            color: #ddd; font-weight: bold; 
-            font-size: 12px;
-            margin-bottom: 2px;
-            text-shadow: 1px 1px 2px black;
-            white-space: nowrap;
-        }
-
-        .timer-badge {
-            background: #e74c3c; color: white; 
-            padding: 2px 8px; border-radius: 8px;
-            font-weight: bold; font-size: 12px;
-            animation: pulse 1s infinite alternate;
-            margin-left: 5px;
-            display: inline-block;
-        }
+        .player-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 5px; color: #ddd; font-weight: bold; font-size: 12px; margin-bottom: 2px; text-shadow: 1px 1px 2px black; white-space: nowrap; }
+        .timer-badge { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 8px; font-weight: bold; font-size: 12px; animation: pulse 1s infinite alternate; margin-left: 5px; display: inline-block; }
         @keyframes pulse { from { opacity: 0.8; } to { opacity: 1; box-shadow: 0 0 10px #e74c3c; } }
 
         .mini-cards-container { display:flex; gap:2px; justify-content:center; margin-top:4px; height: 26px; }
         .card-mini { width: 16px; height: 24px; background: linear-gradient(135deg, #c0392b 0%, #7e1910 100%); border: 1px solid white; border-radius: 3px; box-shadow: 1px 1px 3px black; }
 
-        /* STILURI CĂRȚI GENERALE (MASĂ) */
+        /* CĂRȚI MASA */
         .card { 
             width: var(--table-card-w); height: var(--table-card-h); 
             background: white; border-radius: 8px; 
             display: flex; justify-content: center; align-items: center; 
-            font-weight: bold; 
-            font-size: var(--table-font-size); 
+            font-weight: bold; font-size: var(--table-font-size); 
             box-shadow: 3px 3px 8px rgba(0,0,0,0.6); 
             position: relative; transition: transform 0.2s; user-select: none; cursor: grab;
-            overflow: hidden; 
-            flex-shrink: 0;
+            overflow: hidden; flex-shrink: 0;
         }
         .card.back { background: linear-gradient(135deg, #c0392b 0%, #7e1910 100%); border: 2px solid white; color: transparent !important; cursor: default; }
         .card.absolute { position: absolute !important; }
         .card.selected { transform: translateY(-25px) !important; border: 3px solid var(--active); z-index: 1000; box-shadow: 0 0 15px var(--active); }
         .card.locked { opacity: 0.6; filter: grayscale(0.8); border: 2px solid #e74c3c; cursor: not-allowed; }
         .card.dragging { opacity: 0.5; border: 2px dashed #fff; transform: scale(1.1); z-index: 9999; }
-        .card.rejected-card { opacity: 0.8; filter: grayscale(0.5); pointer-events: none; border: 2px solid #555; }
         
         .suit-red { color: #e74c3c !important; }
         .suit-black { color: black !important; }
         .card .pts { position: absolute; bottom: 4px; font-size: 0.35em; color: #3498db; width: 100%; text-align: center; font-weight: normal; }
 
-        /* STILURI CĂRȚI MÂNĂ */
-        .hand-cards { 
-            display: flex; gap: -5px; height: auto; 
-            align-items: flex-end; justify-content: center; 
-            width: auto; min-width: 100%; 
-        }
-        .hand-cards .card { 
-            width: var(--hand-card-w); 
-            height: var(--hand-card-h); 
-            font-size: calc(4vh * var(--hand-font-scale));
-            cursor: pointer; 
-            border: 1px solid #ccc; 
-        }
+        /* CĂRȚI MÂNĂ */
+        .hand-cards { display: flex; gap: -5px; height: auto; align-items: flex-end; justify-content: center; width: auto; min-width: 100%; }
+        .hand-cards .card { width: var(--hand-card-w); height: var(--hand-card-h); font-size: calc(4vh * var(--hand-font-scale)); cursor: pointer; border: 1px solid #ccc; }
 
-        .action-btn { position: absolute; bottom: 35%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
+        /* BUTOANE JOC (Z-INDEX MARE + POZITIE SIGURA) */
+        .action-btn { 
+            position: absolute; bottom: 25%; /* Coborat mai jos sa fie sigur */
+            z-index: 500; /* Peste orice altceva */
+            color:white; padding:12px 24px; border:none; border-radius:30px; 
+            font-weight:bold; cursor:pointer; font-size: 15px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6); 
+        }
         .btn-hart { left: 2%; background:#e74c3c; } 
         .btn-play { right: 2%; background:#27ae60; } 
-        
+        .action-btn:disabled { opacity: 0.4; filter: grayscale(1); transform: scale(0.95); pointer-events: none; }
+
         .deck-count { position: absolute; top: -20px; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: white; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 10px; }
         .mult-badge { position: absolute; top: -10px; right: -10px; background: var(--gold); color: black; border-radius: 50%; width: 24px; height: 24px; display: none; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #000; z-index: 120; font-size: 12px; }
 
-        /* FIX REZULTATE - CARDS LATITE */
-        .result-card { 
-            display: inline-flex; 
-            width: 30px; /* Lățit considerabil de la 18px */
-            height: 28px; 
-            background: white; border-radius: 4px; 
-            justify-content: center; align-items: center; 
-            font-size: 14px; font-weight: bold; 
-            margin-right: 2px; 
-            border: 1px solid #999; vertical-align: middle; 
-        }
+        /* FIX REZULTATE */
+        .result-card { display: inline-flex; width: 30px; height: 28px; background: white; border-radius: 4px; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; margin-right: 2px; border: 1px solid #999; vertical-align: middle; }
 
         #hart-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:4000; justify-content:center; align-items:center; }
         #modal-box { background:#1a1a1a; padding:25px; border:3px solid var(--gold); border-radius:25px; text-align:center; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; }
         #msg { font-size: 26px; text-shadow: 0 2px 4px black; margin-bottom: 5px; position:absolute; top: 12%; width:100%; text-align:center; z-index:1600; pointer-events:none; }
         #setup-layer { position: absolute; inset:0; z-index:1500; display:none; pointer-events:auto; }
-        
         .flying-card { position: fixed; z-index: 9999; transition: all 0.6s ease-in-out; box-shadow: 0 10px 30px rgba(0,0,0,0.8); pointer-events: none; }
         #rejected-pile-container { position: absolute; top: 35%; left: 25%; width: var(--card-w); height: var(--card-h); pointer-events: none; z-index: 10; transform: rotate(-15deg); }
 
-        /* ZONA CENTRALĂ */
-        #center-cluster {
-            display: none; 
-            flex-direction: row; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 15px; 
-            margin-top: -30px; 
-        }
-        
+        #center-cluster { display: none; flex-direction: row; align-items: center; justify-content: center; gap: 15px; margin-top: -30px; }
         .slot { position: relative; width: var(--table-card-w); height: var(--table-card-h); display:flex; justify-content:center; align-items:center; }
         #trump-slot { transform: rotate(-5deg); margin-right: 5px; } 
         #staging-slot { margin-left: 5px; transform: rotate(5deg); }
-        
     </style>
 </head>
 <body>
@@ -215,12 +149,10 @@
     <div class="ctrl-btn" onclick="adjustTableSize(-1)">M-</div>
     <div class="ctrl-btn" onclick="adjustTableSize(1)">M+</div>
 </div>
-
 <div id="ctrl-bottom-left" class="corner-controls">
     <div class="ctrl-btn" onclick="adjustHandText(-0.1)">T-</div>
     <div class="ctrl-btn" onclick="adjustHandText(0.1)">T+</div>
 </div>
-
 <div id="ctrl-bottom-right" class="corner-controls">
     <div class="ctrl-btn" onclick="adjustHandSize(-1)">C-</div>
     <div class="ctrl-btn" onclick="adjustHandSize(1)">C+</div>
@@ -238,36 +170,29 @@
 
 <div class="game-wrapper">
     <div id="msg" style="color: var(--gold); font-weight: bold;"></div>
-    
     <div id="table-ui" class="table">
         <div id="setup-layer"></div>
         <div id="rejected-pile-container"></div>
-        
         <button id="hart-btn" class="action-btn btn-hart" style="display:none" onclick="triggerHart(0)">HART</button>
         <button id="play-btn" class="action-btn btn-play" style="display:none" onclick="handlePlay()">DA JOS</button>
-        
         <div id="center-cluster">
             <div id="trump-slot" class="slot">
                 <span style="position:absolute; top:-20px; font-size:10px; color:var(--gold); font-weight:bold;">ATU</span>
-                <div id="trump-ui" class="card absolute" style="position:relative"></div>
+                <div id="trump-ui" class="card absolute"></div>
             </div>
-
             <div id="deck-slot" class="slot">
                 <div id="deck-counter" class="deck-count">0</div>
-                <div id="deck-ui" class="card back absolute" style="position:relative" onclick="handleDraw(false)"></div>
+                <div id="deck-ui" class="card back absolute" onclick="handleDraw(false)"></div>
             </div>
-
             <div id="bottom-slot" class="slot">
-                <div id="bottom-ui" class="card absolute" style="position:relative" onclick="handleDraw(true)"></div>
+                <div id="bottom-ui" class="card absolute" onclick="handleDraw(true)"></div>
                 <div id="mult-badge" class="mult-badge">x1</div>
             </div>
-
             <div id="staging-slot" class="slot">
                 <div id="staging-card" class="card" style="display:none"></div>
                 <div id="staging-badge" class="mult-badge">x1</div>
             </div>
         </div>
-        
         <div id="my-player-zone">
             <div class="player-header">
                 <span id="player-name-disp">Tu</span>
@@ -278,7 +203,6 @@
             </div>
             <div id="hand-cards-row" class="hand-cards"></div>
         </div>
-
     </div>
 </div>
 
@@ -301,9 +225,6 @@
     ];
     let dealerId = -1, trumpCard = null, masterDeck = [], discardStack = [], turnIdx = 0, selectedIds = [], hasPlayed = false, hasDrawn = false, moveInterval = null, timeLeft = 0, lastPlayCount = 1;
     let pendingDiscard = [];
-    let draggedItemIndex = null, lobbyInterval = null;
-
-    // --- FUNCTII REGLAJ ---
     let currentHandW = 11, currentHandH = 15.4, currentFontScale = 1.0;
     let currentTableW = 10; 
 
@@ -313,13 +234,11 @@
         document.documentElement.style.setProperty('--hand-card-w', `${currentHandW}vh`);
         document.documentElement.style.setProperty('--hand-card-h', `${currentHandH}vh`);
     }
-
     function adjustHandText(delta) {
         currentFontScale += delta;
         if(currentFontScale < 0.5) currentFontScale = 0.5; if(currentFontScale > 3.0) currentFontScale = 3.0;
         document.documentElement.style.setProperty('--hand-font-scale', currentFontScale);
     }
-
     function adjustTableSize(delta) {
         currentTableW += delta;
         if(currentTableW < 5) currentTableW = 5; if(currentTableW > 20) currentTableW = 20;
@@ -334,63 +253,36 @@
         CONFIG.winPoints = parseInt(document.getElementById('cfg-win-pts').value) || 300;
         document.getElementById('main-menu').style.display = 'none';
         players.forEach(p => p.hand = []);
-        renderSeats(); 
-        startDealerScatter();
+        renderSeats(); startDealerScatter();
     }
 
     function render() {
         renderSeats();
         const tUI = document.getElementById('trump-ui');
-        if(trumpCard) {
-            tUI.innerHTML = `${trumpCard.v}${trumpCard.s}`;
-            applyColor(tUI, trumpCard);
-        } else tUI.innerHTML = '';
-        
+        if(trumpCard) { tUI.innerHTML = `${trumpCard.v}${trumpCard.s}`; applyColor(tUI, trumpCard); } else tUI.innerHTML = '';
         document.getElementById('deck-counter').innerText = `${masterDeck.length}`;
-        
         const bUI = document.getElementById('bottom-ui');
         const badge = document.getElementById('mult-badge');
         if(discardStack.length > 0) {
             const top = discardStack[discardStack.length-1];
-            bUI.style.visibility = 'visible'; 
-            bUI.innerHTML = `${top.v}${top.s}`;
-            applyColor(bUI, top); 
-            if(lastPlayCount > 1) { badge.innerText = `x${lastPlayCount}`; badge.style.display = 'flex'; } 
-            else badge.style.display = 'none';
-        } else {
-            bUI.style.visibility = 'hidden'; badge.style.display = 'none';
-        }
+            bUI.style.visibility = 'visible'; bUI.innerHTML = `${top.v}${top.s}`; applyColor(bUI, top); 
+            if(lastPlayCount > 1) { badge.innerText = `x${lastPlayCount}`; badge.style.display = 'flex'; } else badge.style.display = 'none';
+        } else { bUI.style.visibility = 'hidden'; badge.style.display = 'none'; }
 
         const stagingCard = document.getElementById('staging-card');
         const stagingBadge = document.getElementById('staging-badge');
         if(pendingDiscard.length > 0) {
             stagingCard.style.display = 'flex';
             const topStaged = pendingDiscard[pendingDiscard.length-1];
-            stagingCard.innerHTML = `${topStaged.v}${topStaged.s}`;
-            applyColor(stagingCard, topStaged);
-            if(pendingDiscard.length > 1) {
-                stagingBadge.innerText = `x${pendingDiscard.length}`;
-                stagingBadge.style.display = 'flex';
-            } else {
-                stagingBadge.style.display = 'none';
-            }
-        } else {
-            stagingCard.style.display = 'none';
-            stagingBadge.style.display = 'none';
-        }
+            stagingCard.innerHTML = `${topStaged.v}${topStaged.s}`; applyColor(stagingCard, topStaged);
+            if(pendingDiscard.length > 1) { stagingBadge.innerText = `x${pendingDiscard.length}`; stagingBadge.style.display = 'flex'; } else stagingBadge.style.display = 'none';
+        } else { stagingCard.style.display = 'none'; stagingBadge.style.display = 'none'; }
 
         const pZone = document.getElementById('my-player-zone');
-        if(turnIdx === 0) pZone.classList.add('active-turn');
-        else pZone.classList.remove('active-turn');
-
+        if(turnIdx === 0) pZone.classList.add('active-turn'); else pZone.classList.remove('active-turn');
         document.getElementById('player-score-disp').innerText = players[0].score;
-
         const pTimerSlot = document.getElementById('player-timer-slot');
-        if(turnIdx === 0 && CONFIG.moveTimerLimit > 0) {
-            pTimerSlot.innerHTML = `<div class="timer-badge timer-val">00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}</div>`;
-        } else {
-            pTimerSlot.innerHTML = '';
-        }
+        if(turnIdx === 0 && CONFIG.moveTimerLimit > 0) pTimerSlot.innerHTML = `<div class="timer-badge timer-val">00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}</div>`; else pTimerSlot.innerHTML = '';
 
         const row = document.getElementById('hand-cards-row'); row.innerHTML = '';
         players[0].hand.forEach((c, index) => {
@@ -399,102 +291,47 @@
             applyColor(d, c);
             d.innerHTML = `${c.v}${c.s} <div class="pts">${getPts(c)}p</div>`;
             if(c.lockedInTurn) d.innerHTML += `<div style="position:absolute; top:-5px; right:-5px">🔒</div>`;
-            d.setAttribute('draggable', true);
-            d.addEventListener('dragstart', (e) => handleDragStart(e, index));
-            d.addEventListener('dragover', handleDragOver);
-            d.addEventListener('drop', (e) => handleDrop(e, index));
-            d.addEventListener('dragend', handleDragEnd);
-            d.addEventListener('touchstart', (e) => handleTouchStart(e, index), {passive: false});
-            d.addEventListener('touchmove', (e) => handleTouchMove(e), {passive: false});
-            d.addEventListener('touchend', (e) => handleTouchEnd(e, index));
             d.onclick = () => toggleSelection(c.id);
             row.appendChild(d);
         });
 
         const pBtn = document.getElementById('play-btn');
+        // FIX: Ensure button is enabled only when valid
         pBtn.disabled = (selectedIds.length === 0 || hasPlayed || players[turnIdx].isBot);
         const hBtn = document.getElementById('hart-btn');
-        if(turnIdx === 0 && !hasPlayed && !hasDrawn && !players[0].isBot) {
-            hBtn.disabled = false; hBtn.style.opacity = '1';
-        } else {
-            hBtn.disabled = true; hBtn.style.opacity = '0.5';
-        }
+        if(turnIdx === 0 && !hasPlayed && !hasDrawn && !players[0].isBot) { hBtn.disabled = false; hBtn.style.opacity = '1'; } else { hBtn.disabled = true; hBtn.style.opacity = '0.5'; }
     }
 
     function applyColor(el, c) {
+        if(!c) return;
         el.classList.remove('suit-red', 'suit-black');
-        if(['♥','♦'].includes(c.s)) el.classList.add('suit-red');
-        else el.classList.add('suit-black');
-    }
-
-    let touchStartIndex = null;
-    function handleTouchStart(e, index) {
-        if(players[0].hand[index].lockedInTurn) return;
-        touchStartIndex = index;
-        e.target.classList.add('dragging');
-    }
-    function handleTouchMove(e) { e.preventDefault(); }
-    function handleTouchEnd(e, index) {
-        e.target.classList.remove('dragging');
-        if(touchStartIndex === null) return;
-        const touch = e.changedTouches[0];
-        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-        const cardEl = targetEl.closest('.card');
-        if (cardEl && cardEl.parentNode.id === 'hand-cards-row') {
-            const children = Array.from(cardEl.parentNode.children);
-            const targetIndex = children.indexOf(cardEl);
-            if (targetIndex !== -1 && targetIndex !== touchStartIndex) {
-                const hand = players[0].hand;
-                const [movedItem] = hand.splice(touchStartIndex, 1);
-                hand.splice(targetIndex, 0, movedItem);
-                render();
-            }
-        }
-        touchStartIndex = null;
+        if(['♥','♦'].includes(c.s)) el.classList.add('suit-red'); else el.classList.add('suit-black');
     }
 
     function startTurn() { 
-        clearInterval(moveInterval); 
-        pendingDiscard = []; 
+        clearInterval(moveInterval); pendingDiscard = []; 
         const p = players[turnIdx]; 
-        renderSeats(); 
-        render(); 
-        if(!p.isBot) {
-            document.getElementById('msg').innerText = "TURA TA - DA JOS!";
-            startTurnTimer();
-        } else {
-            document.getElementById('msg').innerText = `JOACĂ ${p.n.toUpperCase()}`;
-            startTurnTimer();
-        }
-        hasPlayed = false; 
-        hasDrawn = false; 
+        renderSeats(); render(); 
+        if(!p.isBot) { document.getElementById('msg').innerText = "TURA TA - DA JOS!"; startTurnTimer(); } 
+        else { document.getElementById('msg').innerText = `JOACĂ ${p.n.toUpperCase()}`; startTurnTimer(); }
+        hasPlayed = false; hasDrawn = false; 
         players.forEach(pl => pl.hand.forEach(c => c.lockedInTurn = false)); 
-        toggleDrawButtons(false); 
         if(p.isBot) setTimeout(botMovePhase1, CONFIG.botDelay); 
     }
 
     function startTurnTimer() {
         if(CONFIG.moveTimerLimit === 0) return;
-        timeLeft = CONFIG.moveTimerLimit;
-        updateTimerVisuals();
+        timeLeft = CONFIG.moveTimerLimit; updateTimerVisuals();
         moveInterval = setInterval(() => {
-            timeLeft--;
-            updateTimerVisuals();
-            if(timeLeft <= 0) {
-                clearInterval(moveInterval);
-                handleTimeout();
-            }
+            timeLeft--; updateTimerVisuals();
+            if(timeLeft <= 0) { clearInterval(moveInterval); handleTimeout(); }
         }, 1000);
     }
 
     function updateTimerVisuals() {
         const str = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
         const activeEl = document.querySelector('.active-turn .timer-val');
-        if(activeEl) activeEl.innerText = str;
-        else {
-            if(turnIdx === 0) render(); 
-            else renderSeats();
-        }
+        if(activeEl) activeEl.innerText = str; else { if(turnIdx === 0) render(); else renderSeats(); }
     }
 
     function handlePlay() { 
@@ -502,9 +339,7 @@
         if(set.length === 0) return; 
         pendingDiscard = [...set];
         players[0].hand = players[0].hand.filter(c => !selectedIds.includes(c.id)); 
-        selectedIds = []; 
-        hasPlayed = true; 
-        toggleDrawButtons(true);
+        selectedIds = []; hasPlayed = true; 
         document.getElementById('msg').innerText = "ACUM TRAGE O CARTE";
         render(); 
     }
@@ -514,74 +349,62 @@
         if(hasDrawn) return; 
         let nC; 
         if(isBottom && discardStack.length > 0) { 
-            nC = discardStack.pop(); 
-            pickAnimation(nC, 0, true); 
-            nC.lockedInTurn = true; 
+            nC = discardStack.pop(); pickAnimation(nC, 0, true); nC.lockedInTurn = true; 
         } else { 
             if(masterDeck.length === 0) { 
-                if(discardStack.length > 1) { 
-                    const t = discardStack.pop(); 
-                    masterDeck = discardStack.reverse(); 
-                    discardStack = [t]; 
-                } 
+                if(discardStack.length > 1) { const t = discardStack.pop(); masterDeck = discardStack.reverse(); discardStack = [t]; } 
             } 
             nC = masterDeck.shift(); 
-            pickAnimation(nC, 0, false);
+            // FIX: Daca pachetul e gol, nu crapam
+            if(nC) pickAnimation(nC, 0, false);
         } 
-        players[0].hand.push(nC); 
-        hasDrawn = true; 
-        toggleDrawButtons(false); 
-        finalizeTurnWithAnimation();
+        if(nC) players[0].hand.push(nC); 
+        hasDrawn = true; finalizeTurnWithAnimation();
     }
 
     function finalizeTurnWithAnimation() {
-        if(pendingDiscard.length === 0) {
-            setTimeout(endTurn, 600);
-            return;
-        }
+        if(pendingDiscard.length === 0) { setTimeout(endTurn, 600); return; }
         const stagingEl = document.getElementById('staging-card'); 
         const targetEl = document.getElementById('bottom-ui'); 
         const flying = stagingEl.cloneNode(true);
-        flying.className = 'card flying-card';
-        flying.style.transform = 'rotate(0deg)'; 
-        const startRect = stagingEl.getBoundingClientRect();
-        const endRect = targetEl.getBoundingClientRect();
-        flying.style.left = startRect.left + 'px';
-        flying.style.top = startRect.top + 'px';
+        flying.className = 'card flying-card'; flying.style.transform = 'rotate(0deg)'; 
+        const startRect = stagingEl.getBoundingClientRect(); const endRect = targetEl.getBoundingClientRect();
+        flying.style.left = startRect.left + 'px'; flying.style.top = startRect.top + 'px';
         document.body.appendChild(flying);
-        document.getElementById('staging-card').style.display = 'none'; 
-        document.getElementById('staging-badge').style.display = 'none';
-        requestAnimationFrame(() => {
-            flying.style.left = endRect.left + 'px';
-            flying.style.top = endRect.top + 'px';
-            flying.style.transform = 'scale(1.0)'; 
-        });
+        document.getElementById('staging-card').style.display = 'none'; document.getElementById('staging-badge').style.display = 'none';
+        requestAnimationFrame(() => { flying.style.left = endRect.left + 'px'; flying.style.top = endRect.top + 'px'; flying.style.transform = 'scale(1.0)'; });
         setTimeout(() => {
             flying.remove();
-            lastPlayCount = pendingDiscard.length;
-            discardStack.push(...pendingDiscard);
-            pendingDiscard = [];
-            render(); 
-            endTurn();
+            lastPlayCount = pendingDiscard.length; discardStack.push(...pendingDiscard); pendingDiscard = [];
+            render(); endTurn();
         }, 600);
     }
 
-    function pickAnimation(card, pIdx, fromBottom) {
-        const flying = document.createElement('div');
-        flying.className = `card flying-card`;
-        let startRect;
-        if(fromBottom) {
-            const bUI = document.getElementById('bottom-ui');
-            startRect = bUI.offsetParent ? bUI.getBoundingClientRect() : document.getElementById('bottom-slot').getBoundingClientRect();
+    function handleTimeout() { 
+        if(turnIdx===0){ 
+            if(!hasPlayed) {
+                // FIX: Daca nu are carti, trage doar
+                if(players[0].hand.length > 0) {
+                    if(selectedIds.length===0){ const s=[...players[0].hand].sort((a,b)=>getPts(b)-getPts(a)); selectedIds=[s[0].id]; } 
+                    handlePlay(); 
+                } else { hasPlayed = true; } // Hack sa treaca mai departe
+                setTimeout(() => handleDraw(false), 500);
+            } else if(!hasDrawn) { handleDraw(false); }
         } else {
-            const dUI = document.getElementById('deck-ui');
-            startRect = dUI ? dUI.getBoundingClientRect() : document.getElementById('deck-slot').getBoundingClientRect();
+            // FIX: Daca botul se blocheaza si expira timpul, il fortam
+            endTurn();
         }
-        flying.style.left = startRect.left + 'px';
-        flying.style.top = startRect.top + 'px';
+    }
+
+    function pickAnimation(card, pIdx, fromBottom) {
+        if(!card) return;
+        const flying = document.createElement('div'); flying.className = `card flying-card`;
+        let startRect;
+        if(fromBottom) startRect = document.getElementById('bottom-ui').getBoundingClientRect();
+        else startRect = document.getElementById('deck-ui').getBoundingClientRect();
+        flying.style.left = startRect.left + 'px'; flying.style.top = startRect.top + 'px';
         flying.innerHTML = (pIdx === 0 || fromBottom) ? `${card.v}${card.s}` : ''; 
-        if(flying.innerHTML) applyColor(flying, card);
-        else flying.classList.add('back');
+        if(flying.innerHTML) applyColor(flying, card); else flying.classList.add('back');
         document.body.appendChild(flying);
         const targetClass = pIdx === 0 ? 'player-header' : players[pIdx].pos; 
         const targetEl = document.querySelector(pIdx === 0 ? '#my-player-zone' : `.${targetClass}`);
@@ -591,34 +414,26 @@
             flying.style.top = (targetRect.top + (pIdx===0? 50 : 10)) + 'px';
             if(pIdx === 0) setTimeout(() => flying.remove(), 600);
             else {
-                if(fromBottom) {
-                    flying.style.transform = "scale(1.2)";
-                    setTimeout(() => flying.remove(), CONFIG.revealTime); 
-                } else setTimeout(() => flying.remove(), 600);
+                if(fromBottom) { flying.style.transform = "scale(1.2)"; setTimeout(() => flying.remove(), CONFIG.revealTime); } 
+                else setTimeout(() => flying.remove(), 600);
             }
         });
     }
 
     function botMovePhase1() {
         const b = players[turnIdx];
-        if(b.hand.reduce((s,c)=>s+getPts(c),0) <= 5 && masterDeck.length < 20) {
-            triggerHart(turnIdx);
-            return;
-        }
-        let gr = {}; 
-        b.hand.forEach(c => { gr[c.v] = (gr[c.v]||[]); gr[c.v].push(c); }); 
+        if(b.hand.reduce((s,c)=>s+getPts(c),0) <= 5 && masterDeck.length < 20) { triggerHart(turnIdx); return; }
+        let gr = {}; b.hand.forEach(c => { gr[c.v] = (gr[c.v]||[]); gr[c.v].push(c); }); 
         let best = Object.keys(gr).sort((a,b) => (gr[b].length*getPts(gr[b][0]))-(gr[a].length*getPts(gr[a][0])))[0]; 
         let toPlay = gr[best];
-        if(toPlay) {
-            pendingDiscard = [...toPlay];
-            b.hand = b.hand.filter(c => !toPlay.includes(c));
-        } else {
-            const biggest = b.hand.sort((a,b)=>getPts(b)-getPts(a))[0];
-            pendingDiscard = [biggest];
-            b.hand = b.hand.filter(c => c.id !== biggest.id);
+        if(toPlay) { pendingDiscard = [...toPlay]; b.hand = b.hand.filter(c => !toPlay.includes(c)); } 
+        else { 
+            if(b.hand.length > 0) {
+                const biggest = b.hand.sort((a,b)=>getPts(b)-getPts(a))[0];
+                pendingDiscard = [biggest]; b.hand = b.hand.filter(c => c.id !== biggest.id);
+            }
         }
-        render(); 
-        setTimeout(botMovePhase2, 1000);
+        render(); setTimeout(botMovePhase2, 1000);
     }
 
     function botMovePhase2() {
@@ -626,39 +441,23 @@
         let takeBottom = false; 
         if(discardStack.length > 0) { 
             const top = discardStack[discardStack.length-1]; 
-            const isSmall = ['A','2','3'].includes(top.v);
-            const pair = b.hand.some(c => c.v === top.v); 
+            const isSmall = ['A','2','3'].includes(top.v); const pair = b.hand.some(c => c.v === top.v); 
             if(pair || isSmall) takeBottom = true; 
         } 
         let nC;
-        if(takeBottom) { 
-            nC = discardStack.pop(); 
-            pickAnimation(nC, turnIdx, true); 
-            nC.lockedInTurn = true; 
-        } else { 
-            if(masterDeck.length === 0) { 
-                const l = discardStack.pop(); 
-                masterDeck = discardStack.reverse(); 
-                discardStack = [l]; 
-            } 
+        if(takeBottom) { nC = discardStack.pop(); pickAnimation(nC, turnIdx, true); nC.lockedInTurn = true; } 
+        else { 
+            if(masterDeck.length === 0) { const l = discardStack.pop(); masterDeck = discardStack.reverse(); discardStack = [l]; } 
             nC = masterDeck.shift(); 
-            pickAnimation(nC, turnIdx, false); 
+            if(nC) pickAnimation(nC, turnIdx, false);
         } 
-        b.hand.push(nC);
-        setTimeout(() => {
-            finalizeTurnWithAnimation();
-        }, (takeBottom ? CONFIG.revealTime : 800));
+        if(nC) b.hand.push(nC);
+        setTimeout(() => { finalizeTurnWithAnimation(); }, (takeBottom ? CONFIG.revealTime : 800));
     }
 
-    function handleDragStart(e, index) { draggedItemIndex = index; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
-    function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
-    function handleDrop(e, targetIndex) { e.preventDefault(); if (draggedItemIndex === null || draggedItemIndex === targetIndex) return; const hand = players[0].hand; const [movedItem] = hand.splice(draggedItemIndex, 1); hand.splice(targetIndex, 0, movedItem); render(); }
-    function handleDragEnd(e) { e.target.classList.remove('dragging'); draggedItemIndex = null; }
     function toggleSelection(id) { 
-        if(hasPlayed) return;
-        if(!players[0].hand.find(c => c.id === id)) return; 
-        const i = selectedIds.indexOf(id); 
-        if(i > -1) selectedIds.splice(i, 1); 
+        if(hasPlayed) return; if(!players[0].hand.find(c => c.id === id)) return; 
+        const i = selectedIds.indexOf(id); if(i > -1) selectedIds.splice(i, 1); 
         else { 
             const c = players[0].hand.find(x => x.id === id); 
             if(selectedIds.length > 0 && players[0].hand.find(x => x.id === selectedIds[0]).v !== c.v) return; 
@@ -667,252 +466,33 @@
         render(); 
     }
     
-    function handleTimeout() { 
-        if(turnIdx===0){ 
-            if(!hasPlayed) {
-                if(selectedIds.length===0){ 
-                    const s=[...players[0].hand].sort((a,b)=>getPts(b)-getPts(a)); 
-                    selectedIds=[s[0].id]; 
-                } 
-                handlePlay(); 
-                setTimeout(() => handleDraw(false), 500);
-            } else if(!hasDrawn) {
-                handleDraw(false);
-            }
-        } 
-    }
     function endTurn() { turnIdx = (turnIdx + CONFIG.direction + 4) % 4; startTurn(); }
-    function toggleDrawButtons(e) { document.getElementById('btn-draw-top').disabled = !e; document.getElementById('btn-draw-bottom').disabled = !e || discardStack.length === 0; }
-    
-    function renderSeats() { 
-        document.querySelectorAll('.player-seat').forEach(e => e.remove()); 
-        players.forEach((p, idx) => { 
-            if (idx === 0) return; 
-            const s = document.createElement('div'); 
-            s.className = `player-seat ${p.pos} ${turnIdx === idx ? 'active-turn' : ''}`; 
-            let timerHTML = '';
-            if(turnIdx === idx && CONFIG.moveTimerLimit > 0) {
-                timerHTML = `<div class="timer-badge timer-val">00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}</div>`;
-            }
-            s.innerHTML = `<b>${p.n}</b> ${timerHTML}<br><small>T: ${p.score}</small>`; 
-            if (p.hand.length > 0) { 
-                let h = `<div class="mini-cards-container">`; 
-                p.hand.forEach(() => h += `<div class="card-mini"></div>`); 
-                s.innerHTML += h + `</div>`; 
-            } 
-            document.getElementById('table-ui').appendChild(s); 
-        }); 
-    }
-    
+    function renderSeats() { document.querySelectorAll('.player-seat').forEach(e => e.remove()); players.forEach((p, idx) => { if (idx === 0) return; const s = document.createElement('div'); s.className = `player-seat ${p.pos} ${turnIdx === idx ? 'active-turn' : ''}`; let timerHTML = ''; if(turnIdx === idx && CONFIG.moveTimerLimit > 0) { timerHTML = `<div class="timer-badge timer-val">00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}</div>`; } s.innerHTML = `<b>${p.n}</b> ${timerHTML}<br><small>T: ${p.score}</small>`; if (p.hand.length > 0) { let h = `<div class="mini-cards-container">`; p.hand.forEach(() => h += `<div class="card-mini"></div>`); s.innerHTML += h + `</div>`; } document.getElementById('table-ui').appendChild(s); }); }
     function generateNewDeck() { let d = []; SUITS.forEach(s => VALS.forEach(v => d.push({ v, s, id: Math.random(), lockedInTurn: false }))); return d.sort(() => Math.random() - 0.5); }
     function getPts(c) { if (!c) return 0; if (trumpCard && c.v === trumpCard.v) return 0; if (c.v === 'A') return 1; if (['J','Q','K'].includes(c.v)) return 10; return parseInt(c.v); }
     
     function startDealerScatter() { 
-        document.getElementById('msg').innerText = "ALEGE DEALER"; 
-        document.getElementById('rejected-pile-container').innerHTML = '';
-        document.getElementById('center-cluster').style.display = 'none'; 
-        renderSeats(); 
-        const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; 
-        masterDeck = generateNewDeck(); 
-        let temp = [...masterDeck].sort(() => Math.random() - 0.5); 
-        for (let i = 0; i < 52; i++) { 
-            const c = document.createElement('div'); c.className = 'card back absolute'; 
-            c.style.left = '50%'; c.style.top = '50%'; 
-            area.appendChild(c); 
-            setTimeout(() => { 
-                c.style.left = (Math.random() * 80 + 10) + '%'; 
-                c.style.top = (Math.random() * 60 + 20) + '%'; 
-                c.style.transform = `rotate(${Math.random() * 360}deg)`; 
-            }, i * 10); 
-            c.onclick = () => revealDealer(temp, i); 
-        } 
+        document.getElementById('msg').innerText = "ALEGE DEALER"; document.getElementById('rejected-pile-container').innerHTML = ''; document.getElementById('center-cluster').style.display = 'none'; renderSeats(); const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; masterDeck = generateNewDeck(); let temp = [...masterDeck].sort(() => Math.random() - 0.5); for (let i = 0; i < 52; i++) { const c = document.createElement('div'); c.className = 'card back absolute'; c.style.left = '50%'; c.style.top = '50%'; area.appendChild(c); setTimeout(() => { c.style.left = (Math.random() * 80 + 10) + '%'; c.style.top = (Math.random() * 60 + 20) + '%'; c.style.transform = `rotate(${Math.random() * 360}deg)`; }, i * 10); c.onclick = () => revealDealer(temp, i); } 
     }
     
     function revealDealer(deck, idx) { 
-        document.getElementById('setup-layer').style.pointerEvents = 'none'; 
-        let res = players.map((p, i) => ({ p, card: deck[(idx + i * 7) % 52], val: VALS.indexOf(deck[(idx + i * 7) % 52].v) })); 
-        res.forEach(r => { 
-            const c = document.createElement('div'); c.className = 'card absolute'; 
-            applyColor(c, r.card); c.innerHTML = `${r.card.v}${r.card.s}`; 
-            c.style.left = '50%'; c.style.top = '50%'; 
-            document.getElementById('setup-layer').appendChild(c); 
-            setTimeout(() => { 
-                let targetEl;
-                if(r.p.id === 0) targetEl = document.getElementById('my-player-zone'); 
-                else targetEl = document.querySelector(`.${r.p.pos}`); 
-                let rect;
-                if(r.p.id === 0 && (!targetEl || targetEl.style.display === 'none')) {
-                     rect = { left: window.innerWidth / 2 - 50, top: window.innerHeight - 100 };
-                } else {
-                     rect = targetEl.getBoundingClientRect();
-                }
-                const tRect = document.getElementById('table-ui').getBoundingClientRect(); 
-                c.style.left = (rect.left - tRect.left + 20) + 'px'; 
-                c.style.top = (rect.top - tRect.top + 10) + 'px'; 
-                c.style.transform = 'rotate(0deg)'; 
-            }, 100); 
-        }); 
-        dealerId = res.sort((a, b) => b.val - a.val)[0].p.id; 
-        setTimeout(startTrumpFan, 2500); 
+        document.getElementById('setup-layer').style.pointerEvents = 'none'; let res = players.map((p, i) => ({ p, card: deck[(idx + i * 7) % 52], val: VALS.indexOf(deck[(idx + i * 7) % 52].v) })); res.forEach(r => { const c = document.createElement('div'); c.className = 'card absolute'; applyColor(c, r.card); c.innerHTML = `${r.card.v}${r.card.s}`; c.style.left = '50%'; c.style.top = '50%'; document.getElementById('setup-layer').appendChild(c); setTimeout(() => { let targetEl; if(r.p.id === 0) targetEl = document.getElementById('my-player-zone'); else targetEl = document.querySelector(`.${r.p.pos}`); let rect; if(r.p.id === 0 && (!targetEl || targetEl.style.display === 'none')) { rect = { left: window.innerWidth / 2 - 50, top: window.innerHeight - 100 }; } else { rect = targetEl.getBoundingClientRect(); } const tRect = document.getElementById('table-ui').getBoundingClientRect(); c.style.left = (rect.left - tRect.left + 20) + 'px'; c.style.top = (rect.top - tRect.top + 10) + 'px'; c.style.transform = 'rotate(0deg)'; }, 100); }); dealerId = res.sort((a, b) => b.val - a.val)[0].p.id; setTimeout(startTrumpFan, 2500); 
     }
     
     function startTrumpFan() { 
-        players.forEach(p => p.hand = []);
-        renderSeats();
-        document.getElementById('rejected-pile-container').innerHTML = '';
-        document.getElementById('center-cluster').style.display = 'none';
-
-        const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; area.style.pointerEvents = 'auto'; 
-        const sel = players[(dealerId + 1 + 4) % 4]; 
-        document.getElementById('msg').innerText = `${sel.n.toUpperCase()} ALEGE ATU`; 
-        masterDeck = generateNewDeck(); 
-        for (let i = 0; i < 52; i++) { 
-            const c = document.createElement('div'); c.className = 'card back absolute'; 
-            c.style.left = (5 + i * 1.7) + '%'; c.style.top = '45%'; c.style.zIndex = 2000 + i; 
-            c.onclick = (e) => { 
-                e.stopPropagation(); 
-                if (!sel.isBot) finalizeTrump(masterDeck[i], c, i); 
-            }; 
-            area.appendChild(c); 
-        } 
-        if (sel.isBot) { 
-            const botPick = () => { 
-                let r = Math.floor(Math.random() * 52); 
-                // SAFETY CHECK
-                if (!masterDeck[r]) {
-                    setTimeout(botPick, 100); 
-                    return; 
-                }
-
-                if (VALS.indexOf(masterDeck[r].v) < CONFIG.minTrumpIdx) {
-                    finalizeTrump(masterDeck[r], area.children[r], r);
-                    setTimeout(botPick, 1000); 
-                }
-                else finalizeTrump(masterDeck[r], area.children[r], r); 
-            }; 
-            setTimeout(botPick, 1500); 
-        } 
+        players.forEach(p => p.hand = []); renderSeats(); document.getElementById('rejected-pile-container').innerHTML = ''; document.getElementById('center-cluster').style.display = 'none'; const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; area.style.pointerEvents = 'auto'; const sel = players[(dealerId + 1 + 4) % 4]; document.getElementById('msg').innerText = `${sel.n.toUpperCase()} ALEGE ATU`; masterDeck = generateNewDeck(); for (let i = 0; i < 52; i++) { const c = document.createElement('div'); c.className = 'card back absolute'; c.style.left = (5 + i * 1.7) + '%'; c.style.top = '45%'; c.style.zIndex = 2000 + i; c.onclick = (e) => { e.stopPropagation(); if (!sel.isBot) finalizeTrump(masterDeck[i], c, i); }; area.appendChild(c); } if (sel.isBot) { const botPick = () => { let r = Math.floor(Math.random() * 52); if (!masterDeck[r]) { setTimeout(botPick, 100); return; } if (VALS.indexOf(masterDeck[r].v) < CONFIG.minTrumpIdx) { finalizeTrump(masterDeck[r], area.children[r], r); setTimeout(botPick, 1000); } else finalizeTrump(masterDeck[r], area.children[r], r); }; setTimeout(botPick, 1500); } 
     }
     
     function finalizeTrump(card, el, idx) { 
-        if (!card) return; 
-
-        if (VALS.indexOf(card.v) < CONFIG.minTrumpIdx) { 
-            document.getElementById('msg').innerText = "PREA MICĂ!"; 
-            applyColor(el, card); el.innerHTML = `${card.v}${card.s}`; el.classList.remove('back'); el.classList.add('rejected-card');
-            const rejContainer = document.getElementById('rejected-pile-container');
-            const clone = el.cloneNode(true);
-            clone.style.position = 'absolute'; clone.style.left = '0'; clone.style.top = '0'; clone.style.zIndex = 100 + rejContainer.children.length; clone.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
-            el.style.opacity = '0'; el.style.pointerEvents = 'none';
-            rejContainer.appendChild(clone);
-            masterDeck[idx] = null; 
-            return; 
-        } 
-        trumpCard = card; 
-        masterDeck[idx] = null; 
-        masterDeck = masterDeck.filter(c => c !== null); 
-        el.className = 'card absolute'; el.innerHTML = `${card.v}${card.s}`; applyColor(el, card); el.style.transform = 'scale(1.2)'; el.style.left = '45%'; el.style.top = '35%'; el.style.zIndex = '3000'; 
-        setTimeout(dealCards, 1500); 
+        if (!card) return; if (VALS.indexOf(card.v) < CONFIG.minTrumpIdx) { document.getElementById('msg').innerText = "PREA MICĂ!"; applyColor(el, card); el.innerHTML = `${card.v}${card.s}`; el.classList.remove('back'); el.classList.add('rejected-card'); const rejContainer = document.getElementById('rejected-pile-container'); const clone = el.cloneNode(true); clone.style.position = 'absolute'; clone.style.left = '0'; clone.style.top = '0'; clone.style.zIndex = 100 + rejContainer.children.length; clone.style.transform = `rotate(${Math.random() * 20 - 10}deg)`; el.style.opacity = '0'; el.style.pointerEvents = 'none'; rejContainer.appendChild(clone); masterDeck[idx] = null; return; } trumpCard = card; masterDeck[idx] = null; masterDeck = masterDeck.filter(c => c !== null); el.className = 'card absolute'; el.innerHTML = `${card.v}${card.s}`; applyColor(el, card); el.style.transform = 'scale(1.2)'; el.style.left = '45%'; el.style.top = '35%'; el.style.zIndex = '3000'; setTimeout(dealCards, 1500); 
     }
     
     function dealCards() { 
-        document.getElementById('setup-layer').style.display = 'none'; 
-        document.getElementById('rejected-pile-container').innerHTML = '';
-        
-        document.getElementById('my-player-zone').style.display = 'flex';
-        document.getElementById('center-cluster').style.display = 'flex';
-
-        masterDeck = masterDeck.filter(c => c !== null);
-        players.forEach(p => p.hand = masterDeck.splice(0, 5)); 
-        discardStack = [masterDeck.shift()]; 
-        
-        document.getElementById('hart-btn').style.display = 'block'; 
-        document.getElementById('play-btn').style.display = 'block'; 
-        
-        turnIdx = (dealerId + 1 + 4) % 4; 
-        document.getElementById('msg').innerText = "";
-        startTurn(); 
+        document.getElementById('setup-layer').style.display = 'none'; document.getElementById('rejected-pile-container').innerHTML = ''; document.getElementById('my-player-zone').style.display = 'flex'; document.getElementById('center-cluster').style.display = 'flex'; masterDeck = masterDeck.filter(c => c !== null); players.forEach(p => p.hand = masterDeck.splice(0, 5)); discardStack = [masterDeck.shift()]; document.getElementById('hart-btn').style.display = 'block'; document.getElementById('play-btn').style.display = 'block'; turnIdx = (dealerId + 1 + 4) % 4; document.getElementById('msg').innerText = ""; startTurn(); 
     }
 
-    function triggerHart(idx) {
-        clearInterval(moveInterval);
-        const caller = players[idx];
-        const resList = players.map(p => ({ n: p.n, pts: p.hand.reduce((s, c) => s + getPts(c), 0) }));
-        const othersMin = Math.min(...resList.filter((_, i) => i !== idx).map(r => r.pts));
-        const success = caller.hand.reduce((s, c) => s + getPts(c), 0) < othersMin;
-        
-        let report = `<div style="font-size:20px; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
-                        <b>${caller.n}</b> strigă HART!<br>
-                        <span style="color:${success ? '#27ae60' : '#e74c3c'}">${success ? 'REUȘIT!' : 'EȘUAT! (+50p)'}</span>
-                      </div>
-                      <table style="width:100%; border-collapse:collapse; font-size:13px;">
-                      <tr style="color:#aaa; border-bottom:1px solid #444;">
-                        <th style="text-align:left; padding:5px;">Jucător</th>
-                        <th style="text-align:center;">Cărți Rămase</th>
-                        <th style="text-align:right;">Mână</th>
-                        <th style="text-align:right;">Pen.</th>
-                        <th style="text-align:right;">Total</th>
-                      </tr>`;
-        
-        let matchWinner = null;
-        resList.forEach((r, i) => {
-            let penalty = 0;
-            if (success) { penalty = (i === idx) ? 0 : r.pts; } 
-            else { if (i === idx) penalty = 50; else penalty = r.pts; }
-            players[i].score += penalty;
-            if (players[i].score >= CONFIG.winPoints) matchWinner = true;
-            
-            let handHTML = '';
-            players[i].hand.forEach(c => {
-                const isRed = ['♥','♦'].includes(c.s);
-                handHTML += `<div class="result-card ${isRed ? 'suit-red' : 'suit-black'}">${c.v}${c.s}</div>`;
-            });
-            if(handHTML === '') handHTML = '<span style="color:#555">-</span>';
-
-            report += `<tr>
-                        <td style="text-align:left; padding:5px; white-space:nowrap;">${r.n}</td>
-                        <td style="text-align:center; padding:2px;">${handHTML}</td>
-                        <td style="text-align:right; color:#ddd;">${r.pts}</td>
-                        <td style="text-align:right; color:${penalty > 0 ? '#e74c3c' : '#27ae60'}">+${penalty}</td>
-                        <td style="text-align:right; font-weight:bold;">${players[i].score}</td>
-                       </tr>`;
-        });
-        report += `</table>`;
-        
-        const nextBtn = document.getElementById('next-btn');
-        if (matchWinner) {
-            const sorted = [...players].sort((a, b) => a.score - b.score);
-            report = `<h2 style="color:var(--gold)">🏆 CAMPION: ${sorted[0].n}</h2>` + report;
-            nextBtn.innerText = "MECI NOU";
-            nextBtn.onclick = () => location.reload();
-        } else {
-            nextBtn.onclick = prepareNextRound;
-            if (CONFIG.moveTimerLimit > 0) {
-                let lobbyTime = CONFIG.moveTimerLimit;
-                nextBtn.innerText = `URMĂTOAREA RUNDĂ (${lobbyTime})`;
-                lobbyInterval = setInterval(() => {
-                    lobbyTime--;
-                    nextBtn.innerText = `URMĂTOAREA RUNDĂ (${lobbyTime})`;
-                    if (lobbyTime <= 0) {
-                        prepareNextRound();
-                    }
-                }, 1000);
-            } else {
-                nextBtn.innerText = "URMĂTOAREA RUNDĂ";
-            }
-        }
-        
-        document.getElementById('modal-body').innerHTML = report;
-        document.getElementById('hart-modal').style.display = 'flex';
-    }
-
-    function prepareNextRound() { 
-        clearInterval(lobbyInterval); 
-        document.getElementById('hart-modal').style.display = 'none'; 
-        document.getElementById('rejected-pile-container').innerHTML = '';
-        dealerId = (dealerId + 1 + 4) % 4; 
-        startTrumpFan(); 
-    }
+    function triggerHart(idx) { clearInterval(moveInterval); const caller = players[idx]; const resList = players.map(p => ({ n: p.n, pts: p.hand.reduce((s, c) => s + getPts(c), 0) })); const othersMin = Math.min(...resList.filter((_, i) => i !== idx).map(r => r.pts)); const success = caller.hand.reduce((s, c) => s + getPts(c), 0) < othersMin; let report = `<div style="font-size:20px; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;"> <b>${caller.n}</b> strigă HART!<br> <span style="color:${success ? '#27ae60' : '#e74c3c'}">${success ? 'REUȘIT!' : 'EȘUAT! (+50p)'}</span> </div> <table style="width:100%; border-collapse:collapse; font-size:13px;"> <tr style="color:#aaa; border-bottom:1px solid #444;"> <th style="text-align:left; padding:5px;">Jucător</th> <th style="text-align:center;">Cărți Rămase</th> <th style="text-align:right;">Mână</th> <th style="text-align:right;">Pen.</th> <th style="text-align:right;">Total</th> </tr>`; let matchWinner = null; resList.forEach((r, i) => { let penalty = 0; if (success) { penalty = (i === idx) ? 0 : r.pts; } else { if (i === idx) penalty = 50; else penalty = r.pts; } players[i].score += penalty; if (players[i].score >= CONFIG.winPoints) matchWinner = true; let handHTML = ''; players[i].hand.forEach(c => { const isRed = ['♥','♦'].includes(c.s); handHTML += `<div class="result-card ${isRed ? 'suit-red' : 'suit-black'}">${c.v}${c.s}</div>`; }); if(handHTML === '') handHTML = '<span style="color:#555">-</span>'; report += `<tr> <td style="text-align:left; padding:5px; white-space:nowrap;">${r.n}</td> <td style="text-align:center; padding:2px;">${handHTML}</td> <td style="text-align:right; color:#ddd;">${r.pts}</td> <td style="text-align:right; color:${penalty > 0 ? '#e74c3c' : '#27ae60'}">+${penalty}</td> <td style="text-align:right; font-weight:bold;">${players[i].score}</td> </tr>`; }); report += `</table>`; const nextBtn = document.getElementById('next-btn'); if (matchWinner) { const sorted = [...players].sort((a, b) => a.score - b.score); report = `<h2 style="color:var(--gold)">🏆 CAMPION: ${sorted[0].n}</h2>` + report; nextBtn.innerText = "MECI NOU"; nextBtn.onclick = () => location.reload(); } else { nextBtn.onclick = prepareNextRound; if (CONFIG.moveTimerLimit > 0) { let lobbyTime = CONFIG.moveTimerLimit; nextBtn.innerText = `URMĂTOAREA RUNDĂ (${lobbyTime})`; lobbyInterval = setInterval(() => { lobbyTime--; nextBtn.innerText = `URMĂTOAREA RUNDĂ (${lobbyTime})`; if (lobbyTime <= 0) { prepareNextRound(); } }, 1000); } else { nextBtn.innerText = "URMĂTOAREA RUNDĂ"; } } document.getElementById('modal-body').innerHTML = report; document.getElementById('hart-modal').style.display = 'flex'; }
+    function prepareNextRound() { clearInterval(lobbyInterval); document.getElementById('hart-modal').style.display = 'none'; document.getElementById('rejected-pile-container').innerHTML = ''; dealerId = (dealerId + 1 + 4) % 4; startTrumpFan(); }
 </script>
 </body>
 </html>
