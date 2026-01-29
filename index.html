@@ -6,14 +6,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<link rel="manifest" href="manifest.json">
-    <title>HART - iPhone Edition v10.12</title>
+    <title>HART - iPhone Edition v10.13</title>
     <style>
         :root { 
             --felt: radial-gradient(circle, #14692e 0%, #073d1c 100%); 
             --active: #00f2ff; 
             --gold: #f1c40f; 
-            --card-w: 10vh; 
-            --card-h: 14vh; 
+            --card-w: 9vh; /* Ușor micșorate pentru a încăpea mai bine */
+            --card-h: 12.6vh; 
             --font-scale: 1; 
         }
         
@@ -37,27 +37,23 @@
         
         /* SCAUNE ADVERSARI */
         .player-seat { position: absolute; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 12px; text-align: center; min-width: 90px; border: 1px solid #555; z-index: 100; transition: 0.4s; font-size: calc(13px * var(--font-scale)); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .pos-top { top: 8%; left: 50%; transform: translateX(-50%); } 
-        .pos-left { left: 3%; top: 35%; transform: translateY(-50%); } 
-        .pos-right { right: 3%; top: 35%; transform: translateY(-50%); }
+        /* Fix 2: Strateg lipit de sus */
+        .pos-top { top: 2%; left: 50%; transform: translateX(-50%); } 
+        .pos-left { left: 2%; top: 30%; transform: translateY(-50%); } 
+        .pos-right { right: 2%; top: 30%; transform: translateY(-50%); }
         
-        /* CHENAR JUCĂTOR - FIX ELASTICITATE */
+        /* CHENAR JUCĂTOR - Fix 3: Coborât la maxim */
         #my-player-zone {
             position: absolute; 
-            bottom: max(20px, 4vh); 
+            bottom: 5px; /* Lipit de jos */
             left: 50%; transform: translateX(-50%);
-            /* MODIFICAT: Width auto și fit-content pentru a crește cu cărțile */
-            width: auto; 
             width: fit-content;
-            min-width: 320px; /* Lățime minimă decentă */
-            max-width: 98vw; /* Să nu iasă din ecran */
-            
+            min-width: 320px; 
+            max-width: 98vw;
             background: rgba(0,0,0,0.4); 
             border: 2px solid #555;
             border-radius: 20px;
-            /* MODIFICAT: Padding mai mare pentru relaxare */
-            padding: 10px 25px; 
-            
+            padding: 10px 15px; 
             display: none; 
             flex-direction: column; align-items: center;
             transition: all 0.3s ease;
@@ -78,11 +74,11 @@
         .player-header {
             width: 100%;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 5px; box-sizing: border-box;
+            padding: 0 5px;
             color: #ddd; font-weight: bold; font-size: calc(14px * var(--font-scale));
-            margin-bottom: 8px; /* Spațiu între text și cărți */
+            margin-bottom: 5px;
             text-shadow: 1px 1px 2px black;
-            white-space: nowrap; /* Să nu se rupă textul */
+            white-space: nowrap;
         }
 
         .timer-badge {
@@ -106,39 +102,32 @@
             box-shadow: 3px 3px 8px rgba(0,0,0,0.6); 
             position: relative; transition: transform 0.2s; user-select: none; cursor: grab;
             overflow: hidden; 
-            flex-shrink: 0; /* IMPEDICĂ STRIVIREA CĂRȚILOR */
+            flex-shrink: 0;
         }
         .card.back { background: linear-gradient(135deg, #c0392b 0%, #7e1910 100%); border: 2px solid white; color: transparent !important; cursor: default; }
         .card.absolute { position: absolute !important; }
         .card.selected { transform: translateY(-25px) !important; border: 3px solid var(--active); z-index: 1000; box-shadow: 0 0 15px var(--active); }
         .card.locked { opacity: 0.6; filter: grayscale(0.8); border: 2px solid #e74c3c; cursor: not-allowed; }
-        .card.dragging { opacity: 0.5; border: 2px dashed #fff; transform: scale(1.1); }
+        .card.dragging { opacity: 0.5; border: 2px dashed #fff; transform: scale(1.1); z-index: 9999; } /* Dragging style */
         .card.rejected-card { opacity: 0.8; filter: grayscale(0.5); pointer-events: none; border: 2px solid #555; }
         
         .suit-red { color: #e74c3c !important; }
         .suit-black { color: black !important; }
         .card .pts { position: absolute; bottom: 4px; font-size: 0.35em; color: #3498db; width: 100%; text-align: center; font-weight: normal; }
 
-        .action-btn { position: absolute; bottom: 35%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: calc(15px * var(--font-scale)); box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
-        .btn-hart { left: 10%; background:#e74c3c; }
-        .btn-play { right: 10%; background:#27ae60; }
-        .draw-btn { background:#f39c12; color:white; font-size: calc(12px * var(--font-scale)); margin-top:8px; border:none; padding:8px 16px; border-radius:15px; cursor:pointer; font-weight: bold; box-shadow: 0 2px 5px black; }
+        /* BUTOANE RIDICATE MAI SUS */
+        .action-btn { position: absolute; bottom: 40%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: calc(15px * var(--font-scale)); box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
+        .btn-hart { left: 5%; background:#e74c3c; }
+        .btn-play { right: 5%; background:#27ae60; }
+        
+        .draw-btn { background:#f39c12; color:white; font-size: calc(11px * var(--font-scale)); margin-top:5px; border:none; padding:6px 12px; border-radius:15px; cursor:pointer; font-weight: bold; box-shadow: 0 2px 5px black; width: 100%; }
         .draw-btn:disabled, .action-btn:disabled { opacity: 0.4; filter: grayscale(1); transform: scale(0.95); }
 
-        .hand-cards { 
-            display: flex; 
-            gap: -5px; 
-            height: 17vh; 
-            align-items: flex-end; 
-            justify-content: center; 
-            /* MODIFICAT: Width auto pentru a lăsa cărțile să dicteze lățimea */
-            width: auto;
-            min-width: 100%; 
-        }
+        .hand-cards { display: flex; gap: -5px; height: 17vh; align-items: flex-end; justify-content: center; width: auto; min-width: 100%; }
         .hand-cards .card { width: 12vh; height: 17vh; font-size: calc(6vh * var(--font-scale)); cursor: pointer; border: 1px solid #ccc; }
 
-        .deck-count { position: absolute; top: -25px; width: 100%; text-align: center; font-size: calc(13px * var(--font-scale)); font-weight: bold; color: white; background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 10px; }
-        .mult-badge { position: absolute; top: -12px; right: -12px; background: var(--gold); color: black; border-radius: 50%; width: 28px; height: 28px; display: none; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #000; z-index: 120; }
+        .deck-count { position: absolute; top: -20px; width: 100%; text-align: center; font-size: calc(12px * var(--font-scale)); font-weight: bold; color: white; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 10px; }
+        .mult-badge { position: absolute; top: -10px; right: -10px; background: var(--gold); color: black; border-radius: 50%; width: 24px; height: 24px; display: none; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #000; z-index: 120; font-size: 12px; }
 
         .result-card { display: inline-flex; width: 18px; height: 26px; background: white; border-radius: 3px; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; margin-right: 2px; border: 1px solid #999; vertical-align: middle; }
 
@@ -150,8 +139,25 @@
         .flying-card { position: fixed; z-index: 9999; transition: all 0.6s ease-in-out; box-shadow: 0 10px 30px rgba(0,0,0,0.8); pointer-events: none; }
         #rejected-pile-container { position: absolute; top: 35%; left: 25%; width: var(--card-w); height: var(--card-h); pointer-events: none; z-index: 10; transform: rotate(-15deg); }
 
-        #staging-area { position: absolute; bottom: 0; left: 120%; width: var(--card-w); height: var(--card-h); display: none; justify-content: center; align-items: center; }
-        #staging-card { position: absolute; top:0; left:0; transform: rotate(5deg); border: 2px solid var(--gold); }
+        /* FIX 1: LAYOUT CENTRAL ORIZONTAL */
+        #center-cluster {
+            display: none; /* Porneste ascuns pana la deal */
+            flex-direction: row; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 15px; /* Lipite */
+            margin-top: -30px; /* Ridicat putin */
+        }
+        
+        /* Sloturi individuale */
+        .slot { position: relative; width: var(--card-w); height: var(--card-h); display:flex; justify-content:center; align-items:center; }
+        
+        /* Trump specific */
+        #trump-slot { transform: rotate(-5deg); margin-right: 5px; } 
+        
+        /* Staging specific */
+        #staging-slot { margin-left: 5px; transform: rotate(5deg); }
+        
     </style>
 </head>
 <body>
@@ -197,28 +203,30 @@
         <button id="hart-btn" class="action-btn btn-hart" style="display:none" onclick="triggerHart(0)">HART</button>
         <button id="play-btn" class="action-btn btn-play" style="display:none" onclick="handlePlay()">DA JOS</button>
         
-        <div id="play-area" style="display:none; flex-direction:column; align-items:center; gap:5px;">
-            <div style="width: var(--card-w); height: var(--card-h); border: 2px dashed rgba(255,255,255,0.2); border-radius: 8px; position: relative; display: flex; justify-content: center; align-items: center;">
-                <span style="position:absolute; top:-20px; font-size:11px; color:var(--gold); font-weight:bold; letter-spacing:1px;">ATU</span>
+        <div id="center-cluster">
+            
+            <div id="trump-slot" class="slot">
+                <span style="position:absolute; top:-20px; font-size:10px; color:var(--gold); font-weight:bold;">ATU</span>
                 <div id="trump-ui" class="card absolute" style="position:relative"></div>
             </div>
-            <div style="display:flex; gap:40px; align-items:flex-end; margin-top:15px;">
-                <div style="text-align:center; position:relative;">
-                    <div id="deck-counter" class="deck-count">0</div>
-                    <div id="deck-ui" class="card back absolute" style="position:relative" onclick="handleDraw(false)"></div>
-                    <button id="btn-draw-top" class="draw-btn" onclick="handleDraw(false)">DE SUS</button>
-                </div>
-                
-                <div id="bottom-container" style="text-align:center; position:relative;">
-                    <div id="bottom-ui" class="card absolute" style="position:relative" onclick="handleDraw(true)"></div>
-                    <div id="mult-badge" class="mult-badge">x1</div>
-                    <button id="btn-draw-bottom" class="draw-btn" onclick="handleDraw(true)">DE JOS</button>
-                    <div id="staging-area">
-                        <div id="staging-card" class="card"></div>
-                        <div id="staging-badge" class="mult-badge">x1</div>
-                    </div>
-                </div>
+
+            <div id="deck-slot" class="slot">
+                <div id="deck-counter" class="deck-count">0</div>
+                <div id="deck-ui" class="card back absolute" style="position:relative" onclick="handleDraw(false)"></div>
+                <button id="btn-draw-top" class="draw-btn" style="position:absolute; bottom:-30px;" onclick="handleDraw(false)">DE SUS</button>
             </div>
+
+            <div id="bottom-slot" class="slot">
+                <div id="bottom-ui" class="card absolute" style="position:relative" onclick="handleDraw(true)"></div>
+                <div id="mult-badge" class="mult-badge">x1</div>
+                <button id="btn-draw-bottom" class="draw-btn" style="position:absolute; bottom:-30px;" onclick="handleDraw(true)">DE JOS</button>
+            </div>
+
+            <div id="staging-slot" class="slot">
+                <div id="staging-card" class="card" style="display:none"></div>
+                <div id="staging-badge" class="mult-badge">x1</div>
+            </div>
+
         </div>
         
         <div id="my-player-zone">
@@ -283,12 +291,16 @@
     function render() {
         renderSeats();
         
+        // Render Atu
         const tUI = document.getElementById('trump-ui');
         if(trumpCard) {
             tUI.innerHTML = `${trumpCard.v}${trumpCard.s}`;
             applyColor(tUI, trumpCard);
         } else tUI.innerHTML = '';
+        
         document.getElementById('deck-counter').innerText = `${masterDeck.length}`;
+        
+        // Render Discard
         const bUI = document.getElementById('bottom-ui');
         const badge = document.getElementById('mult-badge');
         if(discardStack.length > 0) {
@@ -302,11 +314,11 @@
             bUI.style.visibility = 'hidden'; badge.style.display = 'none';
         }
 
-        const stagingArea = document.getElementById('staging-area');
+        // Render Staging (Fixat în slotul lui)
         const stagingCard = document.getElementById('staging-card');
         const stagingBadge = document.getElementById('staging-badge');
         if(pendingDiscard.length > 0) {
-            stagingArea.style.display = 'flex';
+            stagingCard.style.display = 'flex';
             const topStaged = pendingDiscard[pendingDiscard.length-1];
             stagingCard.innerHTML = `${topStaged.v}${topStaged.s}`;
             applyColor(stagingCard, topStaged);
@@ -317,7 +329,8 @@
                 stagingBadge.style.display = 'none';
             }
         } else {
-            stagingArea.style.display = 'none';
+            stagingCard.style.display = 'none';
+            stagingBadge.style.display = 'none';
         }
 
         // RENDER JUCĂTOR
@@ -342,10 +355,18 @@
             d.innerHTML = `${c.v}${c.s} <div class="pts">${getPts(c)}p</div>`;
             if(c.lockedInTurn) d.innerHTML += `<div style="position:absolute; top:-5px; right:-5px">🔒</div>`;
             d.setAttribute('draggable', true);
+            
+            // Mouse events
             d.addEventListener('dragstart', (e) => handleDragStart(e, index));
             d.addEventListener('dragover', handleDragOver);
             d.addEventListener('drop', (e) => handleDrop(e, index));
             d.addEventListener('dragend', handleDragEnd);
+            
+            // FIX 4: TOUCH EVENTS PENTRU TELEFON
+            d.addEventListener('touchstart', (e) => handleTouchStart(e, index), {passive: false});
+            d.addEventListener('touchmove', (e) => handleTouchMove(e), {passive: false});
+            d.addEventListener('touchend', (e) => handleTouchEnd(e, index));
+
             d.onclick = () => toggleSelection(c.id);
             row.appendChild(d);
         });
@@ -366,9 +387,50 @@
         else el.classList.add('suit-black');
     }
 
+    // --- TOUCH EVENTS LOGIC (DRAG ON MOBILE) ---
+    let touchStartIndex = null;
+    
+    function handleTouchStart(e, index) {
+        // Dacă nu e lock sau bot, permitem
+        if(players[0].hand[index].lockedInTurn) return;
+        touchStartIndex = index;
+        e.target.classList.add('dragging');
+    }
+
+    function handleTouchMove(e) {
+        e.preventDefault(); // Oprește scroll-ul ecranului
+        // Opțional: mută vizual elementul cu degetul (complex, omis pt simplitate, doar logica contează)
+    }
+
+    function handleTouchEnd(e, index) {
+        e.target.classList.remove('dragging');
+        if(touchStartIndex === null) return;
+
+        // Detectăm unde s-a ridicat degetul
+        const touch = e.changedTouches[0];
+        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+        
+        // Căutăm dacă elementul de sub deget e o carte sau în interiorul unei cărți
+        const cardEl = targetEl.closest('.card');
+        
+        if (cardEl && cardEl.parentNode.id === 'hand-cards-row') {
+            // Aflăm indexul cărții țintă
+            const children = Array.from(cardEl.parentNode.children);
+            const targetIndex = children.indexOf(cardEl);
+            
+            if (targetIndex !== -1 && targetIndex !== touchStartIndex) {
+                // Executăm mutarea
+                const hand = players[0].hand;
+                const [movedItem] = hand.splice(touchStartIndex, 1);
+                hand.splice(targetIndex, 0, movedItem);
+                render();
+            }
+        }
+        touchStartIndex = null;
+    }
+
     function startTurn() { 
         clearInterval(moveInterval); 
-        
         pendingDiscard = []; 
         const p = players[turnIdx]; 
         
@@ -393,13 +455,10 @@
     function startTurnTimer() {
         if(CONFIG.moveTimerLimit === 0) return;
         timeLeft = CONFIG.moveTimerLimit;
-        
         updateTimerVisuals();
-
         moveInterval = setInterval(() => {
             timeLeft--;
             updateTimerVisuals();
-            
             if(timeLeft <= 0) {
                 clearInterval(moveInterval);
                 handleTimeout();
@@ -410,9 +469,8 @@
     function updateTimerVisuals() {
         const str = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
         const activeEl = document.querySelector('.active-turn .timer-val');
-        if(activeEl) {
-            activeEl.innerText = str;
-        } else {
+        if(activeEl) activeEl.innerText = str;
+        else {
             if(turnIdx === 0) render(); 
             else renderSeats();
         }
@@ -460,8 +518,8 @@
             setTimeout(endTurn, 600);
             return;
         }
-        const stagingEl = document.getElementById('staging-card');
-        const targetEl = document.getElementById('bottom-ui');
+        const stagingEl = document.getElementById('staging-card'); // Acum e in staging-slot
+        const targetEl = document.getElementById('bottom-ui'); // Target e bottom-slot
         const flying = stagingEl.cloneNode(true);
         flying.className = 'card flying-card';
         flying.style.transform = 'rotate(0deg)'; 
@@ -470,7 +528,9 @@
         flying.style.left = startRect.left + 'px';
         flying.style.top = startRect.top + 'px';
         document.body.appendChild(flying);
-        document.getElementById('staging-area').style.display = 'none';
+        document.getElementById('staging-card').style.display = 'none'; // Ascunde originalul
+        document.getElementById('staging-badge').style.display = 'none';
+        
         requestAnimationFrame(() => {
             flying.style.left = endRect.left + 'px';
             flying.style.top = endRect.top + 'px';
@@ -492,10 +552,10 @@
         let startRect;
         if(fromBottom) {
             const bUI = document.getElementById('bottom-ui');
-            startRect = bUI.offsetParent ? bUI.getBoundingClientRect() : document.getElementById('bottom-container').getBoundingClientRect();
+            startRect = bUI.offsetParent ? bUI.getBoundingClientRect() : document.getElementById('bottom-slot').getBoundingClientRect();
         } else {
             const dUI = document.getElementById('deck-ui');
-            startRect = dUI ? dUI.getBoundingClientRect() : document.getElementById('deck-counter').getBoundingClientRect();
+            startRect = dUI ? dUI.getBoundingClientRect() : document.getElementById('deck-slot').getBoundingClientRect();
         }
         flying.style.left = startRect.left + 'px';
         flying.style.top = startRect.top + 'px';
@@ -638,6 +698,7 @@
     function startDealerScatter() { 
         document.getElementById('msg').innerText = "ALEGE DEALER"; 
         document.getElementById('rejected-pile-container').innerHTML = '';
+        document.getElementById('center-cluster').style.display = 'none'; // Ascunde zona centrala la start
         renderSeats(); 
         const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; 
         masterDeck = generateNewDeck(); 
@@ -740,6 +801,7 @@
         document.getElementById('rejected-pile-container').innerHTML = '';
         
         document.getElementById('my-player-zone').style.display = 'flex';
+        document.getElementById('center-cluster').style.display = 'flex'; // ARATAM ZONA CENTRALA
 
         masterDeck = masterDeck.filter(c => c !== null);
         players.forEach(p => p.hand = masterDeck.splice(0, 5)); 
