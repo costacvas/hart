@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>HART - iPhone Edition v10.17</title>
+    <title>HART - iPhone Edition v10.18</title>
     
     <link rel="manifest" href="manifest.json">
 
@@ -15,15 +15,15 @@
             --active: #00f2ff; 
             --gold: #f1c40f; 
             
-            /* Dimensiuni Cărți MASA (Table) - Puțin mărite */
+            /* Dimensiuni Cărți MASA (Table) - Controlabile stanga-sus */
             --table-card-w: 10vh; 
             --table-card-h: 14vh;
             --table-font-size: 3.5vh; 
 
-            /* Dimensiuni Cărți MANA (Hand) - Controlabile din butoane */
+            /* Dimensiuni Cărți MANA (Hand) - Controlabile jos */
             --hand-card-w: 11vh; 
             --hand-card-h: 15.4vh; 
-            --hand-font-scale: 1.0; /* Multiplicator pentru text */
+            --hand-font-scale: 1.0; 
         }
         
         body { margin: 0; background: #0a0a0a; font-family: 'Segoe UI', sans-serif; color: white; overflow: hidden; height: 100vh; width: 100vw; display: flex; touch-action: none; user-select: none; -webkit-user-select: none; }
@@ -38,19 +38,26 @@
         .setting-row select, .setting-row input { background: #333; border: 1px solid var(--gold); color: white; padding: 5px; border-radius: 5px; width: 110px; text-align: center; }
         .start-btn { background: var(--active); color: black; width: 100%; padding: 12px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
         
-        /* CONTROALE COLTURI (TEXT & SIZE) */
+        /* CONTROALE COLTURI */
         .corner-controls {
-            position: absolute; bottom: 10px; z-index: 4000;
+            position: absolute; z-index: 4000;
             display: flex; gap: 5px;
         }
-        #ctrl-left { left: 10px; }
-        #ctrl-right { right: 10px; }
+        /* Jos Stânga - Text Mână */
+        #ctrl-bottom-left { bottom: 10px; left: 10px; }
+        
+        /* Jos Dreapta - Mărime Mână */
+        #ctrl-bottom-right { bottom: 10px; right: 10px; }
+
+        /* NOU: Sus Stânga - Mărime Masă */
+        #ctrl-top-left { top: 10px; left: 10px; }
         
         .ctrl-btn {
             background: rgba(0,0,0,0.6); border: 1px solid #777; color: white;
             width: 35px; height: 35px; border-radius: 50%;
-            font-weight: bold; font-size: 12px; cursor: pointer;
+            font-weight: bold; font-size: 11px; cursor: pointer;
             display: flex; justify-content: center; align-items: center;
+            user-select: none;
         }
         .ctrl-btn:active { background: var(--active); color: black; }
 
@@ -64,7 +71,7 @@
         .pos-left { left: 2%; top: 30%; transform: translateY(-50%); } 
         .pos-right { right: 2%; top: 30%; transform: translateY(-50%); }
         
-        /* CHENAR JUCĂTOR - MODIFICAT */
+        /* CHENAR JUCĂTOR */
         #my-player-zone {
             position: absolute; 
             bottom: 5px; 
@@ -75,7 +82,7 @@
             background: rgba(0,0,0,0.4); 
             border: 2px solid #555;
             border-radius: 20px;
-            padding: 15px 35px; /* Padding mai mare */
+            padding: 15px 35px;
             display: none; 
             flex-direction: column; align-items: center;
             transition: all 0.3s ease;
@@ -98,8 +105,8 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 5px;
             color: #ddd; font-weight: bold; 
-            font-size: 12px; /* Micsorat textul Tu/Scor */
-            margin-bottom: 2px; /* Urcat mai sus */
+            font-size: 12px;
+            margin-bottom: 2px;
             text-shadow: 1px 1px 2px black;
             white-space: nowrap;
         }
@@ -123,7 +130,7 @@
             background: white; border-radius: 8px; 
             display: flex; justify-content: center; align-items: center; 
             font-weight: bold; 
-            font-size: var(--table-font-size); /* Font dinamic masa */
+            font-size: var(--table-font-size); 
             box-shadow: 3px 3px 8px rgba(0,0,0,0.6); 
             position: relative; transition: transform 0.2s; user-select: none; cursor: grab;
             overflow: hidden; 
@@ -140,7 +147,7 @@
         .suit-black { color: black !important; }
         .card .pts { position: absolute; bottom: 4px; font-size: 0.35em; color: #3498db; width: 100%; text-align: center; font-weight: normal; }
 
-        /* STILURI CĂRȚI MÂNĂ (SPECIFICE) */
+        /* STILURI CĂRȚI MÂNĂ */
         .hand-cards { 
             display: flex; gap: -5px; height: auto; 
             align-items: flex-end; justify-content: center; 
@@ -149,7 +156,7 @@
         .hand-cards .card { 
             width: var(--hand-card-w); 
             height: var(--hand-card-h); 
-            font-size: calc(4vh * var(--hand-font-scale)); /* Font controlabil */
+            font-size: calc(4vh * var(--hand-font-scale));
             cursor: pointer; 
             border: 1px solid #ccc; 
         }
@@ -161,7 +168,17 @@
         .deck-count { position: absolute; top: -20px; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: white; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 10px; }
         .mult-badge { position: absolute; top: -10px; right: -10px; background: var(--gold); color: black; border-radius: 50%; width: 24px; height: 24px; display: none; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #000; z-index: 120; font-size: 12px; }
 
-        .result-card { display: inline-flex; width: 18px; height: 26px; background: white; border-radius: 3px; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; margin-right: 2px; border: 1px solid #999; vertical-align: middle; }
+        /* FIX REZULTATE - CARDS LATITE */
+        .result-card { 
+            display: inline-flex; 
+            width: 30px; /* Lățit considerabil de la 18px */
+            height: 28px; 
+            background: white; border-radius: 4px; 
+            justify-content: center; align-items: center; 
+            font-size: 14px; font-weight: bold; 
+            margin-right: 2px; 
+            border: 1px solid #999; vertical-align: middle; 
+        }
 
         #hart-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:4000; justify-content:center; align-items:center; }
         #modal-box { background:#1a1a1a; padding:25px; border:3px solid var(--gold); border-radius:25px; text-align:center; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; }
@@ -194,12 +211,17 @@
     <div style="font-size: 40px; margin-top:20px;">🔄</div>
 </div>
 
-<div id="ctrl-left" class="corner-controls">
+<div id="ctrl-top-left" class="corner-controls">
+    <div class="ctrl-btn" onclick="adjustTableSize(-1)">M-</div>
+    <div class="ctrl-btn" onclick="adjustTableSize(1)">M+</div>
+</div>
+
+<div id="ctrl-bottom-left" class="corner-controls">
     <div class="ctrl-btn" onclick="adjustHandText(-0.1)">T-</div>
     <div class="ctrl-btn" onclick="adjustHandText(0.1)">T+</div>
 </div>
 
-<div id="ctrl-right" class="corner-controls">
+<div id="ctrl-bottom-right" class="corner-controls">
     <div class="ctrl-btn" onclick="adjustHandSize(-1)">C-</div>
     <div class="ctrl-btn" onclick="adjustHandSize(1)">C+</div>
 </div>
@@ -281,26 +303,29 @@
     let pendingDiscard = [];
     let draggedItemIndex = null, lobbyInterval = null;
 
-    // --- FUNCTII NOI PENTRU REGLAJ DIMENSIUNI ---
-    let currentHandW = 11;
-    let currentHandH = 15.4;
-    let currentFontScale = 1.0;
+    // --- FUNCTII REGLAJ ---
+    let currentHandW = 11, currentHandH = 15.4, currentFontScale = 1.0;
+    let currentTableW = 10; 
 
     function adjustHandSize(delta) {
-        currentHandW += delta;
-        currentHandH = currentHandW * 1.4; // Menținem aspect ratio
-        if(currentHandW < 5) currentHandW = 5;
-        if(currentHandW > 20) currentHandW = 20;
-        
+        currentHandW += delta; currentHandH = currentHandW * 1.4;
+        if(currentHandW < 5) currentHandW = 5; if(currentHandW > 20) currentHandW = 20;
         document.documentElement.style.setProperty('--hand-card-w', `${currentHandW}vh`);
         document.documentElement.style.setProperty('--hand-card-h', `${currentHandH}vh`);
     }
 
     function adjustHandText(delta) {
         currentFontScale += delta;
-        if(currentFontScale < 0.5) currentFontScale = 0.5;
-        if(currentFontScale > 3.0) currentFontScale = 3.0;
+        if(currentFontScale < 0.5) currentFontScale = 0.5; if(currentFontScale > 3.0) currentFontScale = 3.0;
         document.documentElement.style.setProperty('--hand-font-scale', currentFontScale);
+    }
+
+    function adjustTableSize(delta) {
+        currentTableW += delta;
+        if(currentTableW < 5) currentTableW = 5; if(currentTableW > 20) currentTableW = 20;
+        document.documentElement.style.setProperty('--table-card-w', `${currentTableW}vh`);
+        document.documentElement.style.setProperty('--table-card-h', `${currentTableW * 1.4}vh`);
+        document.documentElement.style.setProperty('--table-font-size', `${currentTableW * 0.35}vh`);
     }
 
     function initGameSession() {
@@ -657,7 +682,7 @@
         } 
     }
     function endTurn() { turnIdx = (turnIdx + CONFIG.direction + 4) % 4; startTurn(); }
-    function toggleDrawButtons(e) { /* Nu mai avem butoane de toggle */ }
+    function toggleDrawButtons(e) { document.getElementById('btn-draw-top').disabled = !e; document.getElementById('btn-draw-bottom').disabled = !e || discardStack.length === 0; }
     
     function renderSeats() { 
         document.querySelectorAll('.player-seat').forEach(e => e.remove()); 
@@ -753,10 +778,12 @@
         if (sel.isBot) { 
             const botPick = () => { 
                 let r = Math.floor(Math.random() * 52); 
+                // SAFETY CHECK
                 if (!masterDeck[r]) {
                     setTimeout(botPick, 100); 
                     return; 
                 }
+
                 if (VALS.indexOf(masterDeck[r].v) < CONFIG.minTrumpIdx) {
                     finalizeTrump(masterDeck[r], area.children[r], r);
                     setTimeout(botPick, 1000); 
@@ -768,7 +795,8 @@
     }
     
     function finalizeTrump(card, el, idx) { 
-        if (!card) return;
+        if (!card) return; 
+
         if (VALS.indexOf(card.v) < CONFIG.minTrumpIdx) { 
             document.getElementById('msg').innerText = "PREA MICĂ!"; 
             applyColor(el, card); el.innerHTML = `${card.v}${card.s}`; el.classList.remove('back'); el.classList.add('rejected-card');
@@ -813,11 +841,11 @@
         const othersMin = Math.min(...resList.filter((_, i) => i !== idx).map(r => r.pts));
         const success = caller.hand.reduce((s, c) => s + getPts(c), 0) < othersMin;
         
-        let report = `<div style="font-size:calc(20px * var(--font-scale)); margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
+        let report = `<div style="font-size:20px; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
                         <b>${caller.n}</b> strigă HART!<br>
                         <span style="color:${success ? '#27ae60' : '#e74c3c'}">${success ? 'REUȘIT!' : 'EȘUAT! (+50p)'}</span>
                       </div>
-                      <table style="width:100%; border-collapse:collapse; font-size:calc(13px * var(--font-scale));">
+                      <table style="width:100%; border-collapse:collapse; font-size:13px;">
                       <tr style="color:#aaa; border-bottom:1px solid #444;">
                         <th style="text-align:left; padding:5px;">Jucător</th>
                         <th style="text-align:center;">Cărți Rămase</th>
