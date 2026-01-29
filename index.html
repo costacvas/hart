@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>HART - iPhone Edition v10.14</title>
+    <title>HART - iPhone Edition v10.15</title>
     
     <link rel="manifest" href="manifest.json">
 
@@ -118,8 +118,8 @@
 
         /* BUTOANE LATERALE - DATE MAI ÎN MARGINE */
         .action-btn { position: absolute; bottom: 35%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: calc(15px * var(--font-scale)); box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
-        .btn-hart { left: 2%; background:#e74c3c; } /* Lipit de stanga */
-        .btn-play { right: 2%; background:#27ae60; } /* Lipit de dreapta */
+        .btn-hart { left: 2%; background:#e74c3c; } 
+        .btn-play { right: 2%; background:#27ae60; } 
         
         .draw-btn { background:#f39c12; color:white; font-size: calc(11px * var(--font-scale)); border:none; padding:6px 12px; border-radius:15px; cursor:pointer; font-weight: bold; box-shadow: 0 2px 5px black; width: 100%; }
         .draw-btn:disabled, .action-btn:disabled { opacity: 0.4; filter: grayscale(1); transform: scale(0.95); }
@@ -154,7 +154,6 @@
         #trump-slot { transform: rotate(-5deg); margin-right: 5px; } 
         #staging-slot { margin-left: 5px; transform: rotate(5deg); }
         
-        /* Fixare butoane sub carduri */
         .btn-holder { position:absolute; bottom:-35px; width:120%; left:-10%; }
         
     </style>
@@ -708,7 +707,6 @@
         players.forEach(p => p.hand = []);
         renderSeats();
         document.getElementById('rejected-pile-container').innerHTML = '';
-        // FIX IMPORTANT: ASCUNDEM ZONA DE JOC LA START
         document.getElementById('center-cluster').style.display = 'none';
 
         const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; area.style.pointerEvents = 'auto'; 
@@ -727,6 +725,12 @@
         if (sel.isBot) { 
             const botPick = () => { 
                 let r = Math.floor(Math.random() * 52); 
+                // FIX 1: Verifică dacă cartea a fost deja eliminată (e null)
+                if (!masterDeck[r]) {
+                    setTimeout(botPick, 100); 
+                    return; 
+                }
+
                 if (VALS.indexOf(masterDeck[r].v) < CONFIG.minTrumpIdx) {
                     finalizeTrump(masterDeck[r], area.children[r], r);
                     setTimeout(botPick, 1000); 
@@ -738,6 +742,9 @@
     }
     
     function finalizeTrump(card, el, idx) { 
+        // FIX 3: Siguranță
+        if (!card) return;
+
         if (VALS.indexOf(card.v) < CONFIG.minTrumpIdx) { 
             document.getElementById('msg').innerText = "PREA MICĂ!"; 
             applyColor(el, card); el.innerHTML = `${card.v}${card.s}`; el.classList.remove('back'); el.classList.add('rejected-card');
@@ -760,7 +767,6 @@
         document.getElementById('setup-layer').style.display = 'none'; 
         document.getElementById('rejected-pile-container').innerHTML = '';
         
-        // FIX: Afișăm elementele de joc abia acum
         document.getElementById('my-player-zone').style.display = 'flex';
         document.getElementById('center-cluster').style.display = 'flex';
 
@@ -772,6 +778,9 @@
         document.getElementById('hart-btn').style.display = 'block'; 
         document.getElementById('play-btn').style.display = 'block'; 
         turnIdx = (dealerId + 1 + 4) % 4; 
+        
+        // FIX 2: Mesaj curat la început
+        document.getElementById('msg').innerText = ""; 
         startTurn(); 
     }
 
