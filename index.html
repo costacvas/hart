@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>HART - iPhone Edition v10.15</title>
+    <title>HART - iPhone Edition v10.16</title>
     
     <link rel="manifest" href="manifest.json">
 
@@ -116,7 +116,7 @@
         .suit-black { color: black !important; }
         .card .pts { position: absolute; bottom: 4px; font-size: 0.35em; color: #3498db; width: 100%; text-align: center; font-weight: normal; }
 
-        /* BUTOANE LATERALE - DATE MAI ÎN MARGINE */
+        /* BUTOANE LATERALE */
         .action-btn { position: absolute; bottom: 35%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: calc(15px * var(--font-scale)); box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
         .btn-hart { left: 2%; background:#e74c3c; } 
         .btn-play { right: 2%; background:#27ae60; } 
@@ -725,7 +725,7 @@
         if (sel.isBot) { 
             const botPick = () => { 
                 let r = Math.floor(Math.random() * 52); 
-                // FIX 1: Verifică dacă cartea a fost deja eliminată (e null)
+                // SAFETY CHECK: Daca cartea a fost deja eliminata (null), incercam din nou
                 if (!masterDeck[r]) {
                     setTimeout(botPick, 100); 
                     return; 
@@ -742,8 +742,7 @@
     }
     
     function finalizeTrump(card, el, idx) { 
-        // FIX 3: Siguranță
-        if (!card) return;
+        if (!card) return; // EXTRA SAFETY
 
         if (VALS.indexOf(card.v) < CONFIG.minTrumpIdx) { 
             document.getElementById('msg').innerText = "PREA MICĂ!"; 
@@ -773,14 +772,13 @@
         masterDeck = masterDeck.filter(c => c !== null);
         players.forEach(p => p.hand = masterDeck.splice(0, 5)); 
         discardStack = [masterDeck.shift()]; 
-        document.getElementById('play-area').style.display = 'flex'; 
         
+        // FIX CRASH: NU MAI APELAM PLAY-AREA
         document.getElementById('hart-btn').style.display = 'block'; 
         document.getElementById('play-btn').style.display = 'block'; 
-        turnIdx = (dealerId + 1 + 4) % 4; 
         
-        // FIX 2: Mesaj curat la început
-        document.getElementById('msg').innerText = ""; 
+        turnIdx = (dealerId + 1 + 4) % 4; 
+        document.getElementById('msg').innerText = ""; // STERGE MESAJUL 'GAMBLER ALEGE ATU'
         startTurn(); 
     }
 
