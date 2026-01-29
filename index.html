@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-	<link rel="manifest" href="manifest.json">
-    <title>HART - iPhone Edition v10.13</title>
+    <title>HART - iPhone Edition v10.14</title>
+    
+    <link rel="manifest" href="manifest.json">
+
     <style>
         :root { 
             --felt: radial-gradient(circle, #14692e 0%, #073d1c 100%); 
             --active: #00f2ff; 
             --gold: #f1c40f; 
-            --card-w: 9vh; /* Ușor micșorate pentru a încăpea mai bine */
+            --card-w: 9vh; 
             --card-h: 12.6vh; 
             --font-scale: 1; 
         }
@@ -37,15 +39,14 @@
         
         /* SCAUNE ADVERSARI */
         .player-seat { position: absolute; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 12px; text-align: center; min-width: 90px; border: 1px solid #555; z-index: 100; transition: 0.4s; font-size: calc(13px * var(--font-scale)); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        /* Fix 2: Strateg lipit de sus */
         .pos-top { top: 2%; left: 50%; transform: translateX(-50%); } 
         .pos-left { left: 2%; top: 30%; transform: translateY(-50%); } 
         .pos-right { right: 2%; top: 30%; transform: translateY(-50%); }
         
-        /* CHENAR JUCĂTOR - Fix 3: Coborât la maxim */
+        /* CHENAR JUCĂTOR */
         #my-player-zone {
             position: absolute; 
-            bottom: 5px; /* Lipit de jos */
+            bottom: 5px; 
             left: 50%; transform: translateX(-50%);
             width: fit-content;
             min-width: 320px; 
@@ -108,19 +109,19 @@
         .card.absolute { position: absolute !important; }
         .card.selected { transform: translateY(-25px) !important; border: 3px solid var(--active); z-index: 1000; box-shadow: 0 0 15px var(--active); }
         .card.locked { opacity: 0.6; filter: grayscale(0.8); border: 2px solid #e74c3c; cursor: not-allowed; }
-        .card.dragging { opacity: 0.5; border: 2px dashed #fff; transform: scale(1.1); z-index: 9999; } /* Dragging style */
+        .card.dragging { opacity: 0.5; border: 2px dashed #fff; transform: scale(1.1); z-index: 9999; }
         .card.rejected-card { opacity: 0.8; filter: grayscale(0.5); pointer-events: none; border: 2px solid #555; }
         
         .suit-red { color: #e74c3c !important; }
         .suit-black { color: black !important; }
         .card .pts { position: absolute; bottom: 4px; font-size: 0.35em; color: #3498db; width: 100%; text-align: center; font-weight: normal; }
 
-        /* BUTOANE RIDICATE MAI SUS */
-        .action-btn { position: absolute; bottom: 40%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: calc(15px * var(--font-scale)); box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
-        .btn-hart { left: 5%; background:#e74c3c; }
-        .btn-play { right: 5%; background:#27ae60; }
+        /* BUTOANE LATERALE - DATE MAI ÎN MARGINE */
+        .action-btn { position: absolute; bottom: 35%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: calc(15px * var(--font-scale)); box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
+        .btn-hart { left: 2%; background:#e74c3c; } /* Lipit de stanga */
+        .btn-play { right: 2%; background:#27ae60; } /* Lipit de dreapta */
         
-        .draw-btn { background:#f39c12; color:white; font-size: calc(11px * var(--font-scale)); margin-top:5px; border:none; padding:6px 12px; border-radius:15px; cursor:pointer; font-weight: bold; box-shadow: 0 2px 5px black; width: 100%; }
+        .draw-btn { background:#f39c12; color:white; font-size: calc(11px * var(--font-scale)); border:none; padding:6px 12px; border-radius:15px; cursor:pointer; font-weight: bold; box-shadow: 0 2px 5px black; width: 100%; }
         .draw-btn:disabled, .action-btn:disabled { opacity: 0.4; filter: grayscale(1); transform: scale(0.95); }
 
         .hand-cards { display: flex; gap: -5px; height: 17vh; align-items: flex-end; justify-content: center; width: auto; min-width: 100%; }
@@ -139,24 +140,22 @@
         .flying-card { position: fixed; z-index: 9999; transition: all 0.6s ease-in-out; box-shadow: 0 10px 30px rgba(0,0,0,0.8); pointer-events: none; }
         #rejected-pile-container { position: absolute; top: 35%; left: 25%; width: var(--card-w); height: var(--card-h); pointer-events: none; z-index: 10; transform: rotate(-15deg); }
 
-        /* FIX 1: LAYOUT CENTRAL ORIZONTAL */
+        /* ZONA CENTRALĂ */
         #center-cluster {
-            display: none; /* Porneste ascuns pana la deal */
+            display: none; 
             flex-direction: row; 
             align-items: center; 
             justify-content: center; 
-            gap: 15px; /* Lipite */
-            margin-top: -30px; /* Ridicat putin */
+            gap: 15px; 
+            margin-top: -30px; 
         }
         
-        /* Sloturi individuale */
         .slot { position: relative; width: var(--card-w); height: var(--card-h); display:flex; justify-content:center; align-items:center; }
-        
-        /* Trump specific */
         #trump-slot { transform: rotate(-5deg); margin-right: 5px; } 
-        
-        /* Staging specific */
         #staging-slot { margin-left: 5px; transform: rotate(5deg); }
+        
+        /* Fixare butoane sub carduri */
+        .btn-holder { position:absolute; bottom:-35px; width:120%; left:-10%; }
         
     </style>
 </head>
@@ -204,7 +203,6 @@
         <button id="play-btn" class="action-btn btn-play" style="display:none" onclick="handlePlay()">DA JOS</button>
         
         <div id="center-cluster">
-            
             <div id="trump-slot" class="slot">
                 <span style="position:absolute; top:-20px; font-size:10px; color:var(--gold); font-weight:bold;">ATU</span>
                 <div id="trump-ui" class="card absolute" style="position:relative"></div>
@@ -213,20 +211,19 @@
             <div id="deck-slot" class="slot">
                 <div id="deck-counter" class="deck-count">0</div>
                 <div id="deck-ui" class="card back absolute" style="position:relative" onclick="handleDraw(false)"></div>
-                <button id="btn-draw-top" class="draw-btn" style="position:absolute; bottom:-30px;" onclick="handleDraw(false)">DE SUS</button>
+                <div class="btn-holder"><button id="btn-draw-top" class="draw-btn" onclick="handleDraw(false)">DE SUS</button></div>
             </div>
 
             <div id="bottom-slot" class="slot">
                 <div id="bottom-ui" class="card absolute" style="position:relative" onclick="handleDraw(true)"></div>
                 <div id="mult-badge" class="mult-badge">x1</div>
-                <button id="btn-draw-bottom" class="draw-btn" style="position:absolute; bottom:-30px;" onclick="handleDraw(true)">DE JOS</button>
+                <div class="btn-holder"><button id="btn-draw-bottom" class="draw-btn" onclick="handleDraw(true)">DE JOS</button></div>
             </div>
 
             <div id="staging-slot" class="slot">
                 <div id="staging-card" class="card" style="display:none"></div>
                 <div id="staging-badge" class="mult-badge">x1</div>
             </div>
-
         </div>
         
         <div id="my-player-zone">
@@ -291,7 +288,6 @@
     function render() {
         renderSeats();
         
-        // Render Atu
         const tUI = document.getElementById('trump-ui');
         if(trumpCard) {
             tUI.innerHTML = `${trumpCard.v}${trumpCard.s}`;
@@ -300,7 +296,6 @@
         
         document.getElementById('deck-counter').innerText = `${masterDeck.length}`;
         
-        // Render Discard
         const bUI = document.getElementById('bottom-ui');
         const badge = document.getElementById('mult-badge');
         if(discardStack.length > 0) {
@@ -314,7 +309,6 @@
             bUI.style.visibility = 'hidden'; badge.style.display = 'none';
         }
 
-        // Render Staging (Fixat în slotul lui)
         const stagingCard = document.getElementById('staging-card');
         const stagingBadge = document.getElementById('staging-badge');
         if(pendingDiscard.length > 0) {
@@ -333,7 +327,6 @@
             stagingBadge.style.display = 'none';
         }
 
-        // RENDER JUCĂTOR
         const pZone = document.getElementById('my-player-zone');
         if(turnIdx === 0) pZone.classList.add('active-turn');
         else pZone.classList.remove('active-turn');
@@ -355,18 +348,13 @@
             d.innerHTML = `${c.v}${c.s} <div class="pts">${getPts(c)}p</div>`;
             if(c.lockedInTurn) d.innerHTML += `<div style="position:absolute; top:-5px; right:-5px">🔒</div>`;
             d.setAttribute('draggable', true);
-            
-            // Mouse events
             d.addEventListener('dragstart', (e) => handleDragStart(e, index));
             d.addEventListener('dragover', handleDragOver);
             d.addEventListener('drop', (e) => handleDrop(e, index));
             d.addEventListener('dragend', handleDragEnd);
-            
-            // FIX 4: TOUCH EVENTS PENTRU TELEFON
             d.addEventListener('touchstart', (e) => handleTouchStart(e, index), {passive: false});
             d.addEventListener('touchmove', (e) => handleTouchMove(e), {passive: false});
             d.addEventListener('touchend', (e) => handleTouchEnd(e, index));
-
             d.onclick = () => toggleSelection(c.id);
             row.appendChild(d);
         });
@@ -387,39 +375,23 @@
         else el.classList.add('suit-black');
     }
 
-    // --- TOUCH EVENTS LOGIC (DRAG ON MOBILE) ---
     let touchStartIndex = null;
-    
     function handleTouchStart(e, index) {
-        // Dacă nu e lock sau bot, permitem
         if(players[0].hand[index].lockedInTurn) return;
         touchStartIndex = index;
         e.target.classList.add('dragging');
     }
-
-    function handleTouchMove(e) {
-        e.preventDefault(); // Oprește scroll-ul ecranului
-        // Opțional: mută vizual elementul cu degetul (complex, omis pt simplitate, doar logica contează)
-    }
-
+    function handleTouchMove(e) { e.preventDefault(); }
     function handleTouchEnd(e, index) {
         e.target.classList.remove('dragging');
         if(touchStartIndex === null) return;
-
-        // Detectăm unde s-a ridicat degetul
         const touch = e.changedTouches[0];
         const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-        
-        // Căutăm dacă elementul de sub deget e o carte sau în interiorul unei cărți
         const cardEl = targetEl.closest('.card');
-        
         if (cardEl && cardEl.parentNode.id === 'hand-cards-row') {
-            // Aflăm indexul cărții țintă
             const children = Array.from(cardEl.parentNode.children);
             const targetIndex = children.indexOf(cardEl);
-            
             if (targetIndex !== -1 && targetIndex !== touchStartIndex) {
-                // Executăm mutarea
                 const hand = players[0].hand;
                 const [movedItem] = hand.splice(touchStartIndex, 1);
                 hand.splice(targetIndex, 0, movedItem);
@@ -433,10 +405,8 @@
         clearInterval(moveInterval); 
         pendingDiscard = []; 
         const p = players[turnIdx]; 
-        
         renderSeats(); 
         render(); 
-
         if(!p.isBot) {
             document.getElementById('msg').innerText = "TURA TA - DA JOS!";
             startTurnTimer();
@@ -448,7 +418,6 @@
         hasDrawn = false; 
         players.forEach(pl => pl.hand.forEach(c => c.lockedInTurn = false)); 
         toggleDrawButtons(false); 
-        
         if(p.isBot) setTimeout(botMovePhase1, CONFIG.botDelay); 
     }
 
@@ -518,8 +487,8 @@
             setTimeout(endTurn, 600);
             return;
         }
-        const stagingEl = document.getElementById('staging-card'); // Acum e in staging-slot
-        const targetEl = document.getElementById('bottom-ui'); // Target e bottom-slot
+        const stagingEl = document.getElementById('staging-card'); 
+        const targetEl = document.getElementById('bottom-ui'); 
         const flying = stagingEl.cloneNode(true);
         flying.className = 'card flying-card';
         flying.style.transform = 'rotate(0deg)'; 
@@ -528,9 +497,8 @@
         flying.style.left = startRect.left + 'px';
         flying.style.top = startRect.top + 'px';
         document.body.appendChild(flying);
-        document.getElementById('staging-card').style.display = 'none'; // Ascunde originalul
+        document.getElementById('staging-card').style.display = 'none'; 
         document.getElementById('staging-badge').style.display = 'none';
-        
         requestAnimationFrame(() => {
             flying.style.left = endRect.left + 'px';
             flying.style.top = endRect.top + 'px';
@@ -565,7 +533,6 @@
         document.body.appendChild(flying);
         const targetClass = pIdx === 0 ? 'player-header' : players[pIdx].pos; 
         const targetEl = document.querySelector(pIdx === 0 ? '#my-player-zone' : `.${targetClass}`);
-        
         const targetRect = targetEl.getBoundingClientRect();
         requestAnimationFrame(() => {
             flying.style.left = (targetRect.left + (pIdx===0? 100 : 20)) + 'px';
@@ -605,14 +572,12 @@
     function botMovePhase2() {
         const b = players[turnIdx];
         let takeBottom = false; 
-        
         if(discardStack.length > 0) { 
             const top = discardStack[discardStack.length-1]; 
             const isSmall = ['A','2','3'].includes(top.v);
             const pair = b.hand.some(c => c.v === top.v); 
             if(pair || isSmall) takeBottom = true; 
         } 
-        
         let nC;
         if(takeBottom) { 
             nC = discardStack.pop(); 
@@ -627,7 +592,6 @@
             nC = masterDeck.shift(); 
             pickAnimation(nC, turnIdx, false); 
         } 
-        
         b.hand.push(nC);
         setTimeout(() => {
             finalizeTurnWithAnimation();
@@ -672,17 +636,13 @@
         document.querySelectorAll('.player-seat').forEach(e => e.remove()); 
         players.forEach((p, idx) => { 
             if (idx === 0) return; 
-            
             const s = document.createElement('div'); 
             s.className = `player-seat ${p.pos} ${turnIdx === idx ? 'active-turn' : ''}`; 
-            
             let timerHTML = '';
             if(turnIdx === idx && CONFIG.moveTimerLimit > 0) {
                 timerHTML = `<div class="timer-badge timer-val">00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}</div>`;
             }
-
             s.innerHTML = `<b>${p.n}</b> ${timerHTML}<br><small>T: ${p.score}</small>`; 
-            
             if (p.hand.length > 0) { 
                 let h = `<div class="mini-cards-container">`; 
                 p.hand.forEach(() => h += `<div class="card-mini"></div>`); 
@@ -698,7 +658,7 @@
     function startDealerScatter() { 
         document.getElementById('msg').innerText = "ALEGE DEALER"; 
         document.getElementById('rejected-pile-container').innerHTML = '';
-        document.getElementById('center-cluster').style.display = 'none'; // Ascunde zona centrala la start
+        document.getElementById('center-cluster').style.display = 'none'; 
         renderSeats(); 
         const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; 
         masterDeck = generateNewDeck(); 
@@ -728,14 +688,12 @@
                 let targetEl;
                 if(r.p.id === 0) targetEl = document.getElementById('my-player-zone'); 
                 else targetEl = document.querySelector(`.${r.p.pos}`); 
-
                 let rect;
                 if(r.p.id === 0 && (!targetEl || targetEl.style.display === 'none')) {
                      rect = { left: window.innerWidth / 2 - 50, top: window.innerHeight - 100 };
                 } else {
                      rect = targetEl.getBoundingClientRect();
                 }
-
                 const tRect = document.getElementById('table-ui').getBoundingClientRect(); 
                 c.style.left = (rect.left - tRect.left + 20) + 'px'; 
                 c.style.top = (rect.top - tRect.top + 10) + 'px'; 
@@ -750,6 +708,8 @@
         players.forEach(p => p.hand = []);
         renderSeats();
         document.getElementById('rejected-pile-container').innerHTML = '';
+        // FIX IMPORTANT: ASCUNDEM ZONA DE JOC LA START
+        document.getElementById('center-cluster').style.display = 'none';
 
         const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; area.style.pointerEvents = 'auto'; 
         const sel = players[(dealerId + 1 + 4) % 4]; 
@@ -800,8 +760,9 @@
         document.getElementById('setup-layer').style.display = 'none'; 
         document.getElementById('rejected-pile-container').innerHTML = '';
         
+        // FIX: Afișăm elementele de joc abia acum
         document.getElementById('my-player-zone').style.display = 'flex';
-        document.getElementById('center-cluster').style.display = 'flex'; // ARATAM ZONA CENTRALA
+        document.getElementById('center-cluster').style.display = 'flex';
 
         masterDeck = masterDeck.filter(c => c !== null);
         players.forEach(p => p.hand = masterDeck.splice(0, 5)); 
