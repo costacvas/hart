@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<link rel="manifest" href="manifest.json">
+    <title>HART - iPhone Edition v10.12</title>
+    <style>
+        :root { 
+            --felt: radial-gradient(circle, #14692e 0%, #073d1c 100%); 
+            --active: #00f2ff; 
+            --gold: #f1c40f; 
+            --card-w: 10vh; 
+            --card-h: 14vh; 
+            --font-scale: 1; 
+        }
+        
+        body { margin: 0; background: #0a0a0a; font-family: 'Segoe UI', sans-serif; color: white; overflow: hidden; height: 100vh; width: 100vw; display: flex; touch-action: none; user-select: none; -webkit-user-select: none; }
+        
+        #portrait-warning { position: fixed; inset:0; background: #000; z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        @media (orientation: portrait) { #portrait-warning { display: flex; } }
+
+        /* MENIU */
+        #main-menu { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .menu-card { background: #1a1a1a; padding: 15px; border-radius: 15px; border: 2px solid var(--gold); width: 85%; max-width: 400px; text-align: center; max-height: 95vh; overflow-y: auto; }
+        .setting-row { margin: 8px 0; display: flex; justify-content: space-between; align-items: center; font-size: calc(14px * var(--font-scale)); }
+        .setting-row select, .setting-row input { background: #333; border: 1px solid var(--gold); color: white; padding: 5px; border-radius: 5px; width: 110px; text-align: center; }
+        .start-btn { background: var(--active); color: black; width: 100%; padding: 12px; border: none; border-radius: 15px; font-weight: bold; font-size: calc(18px * var(--font-scale)); cursor: pointer; margin-top: 10px; }
+        .font-control-container { display: flex; align-items: center; gap: 5px; background: #333; border: 1px solid var(--gold); border-radius: 5px; padding: 2px; }
+        .font-btn { background: var(--gold); color: black; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; display:flex; justify-content:center; align-items:center; }
+
+        /* MASA DE JOC */
+        .game-wrapper { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+        .table { position: relative; width: 100%; height: 100%; background: var(--felt); display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        
+        /* SCAUNE ADVERSARI */
+        .player-seat { position: absolute; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 12px; text-align: center; min-width: 90px; border: 1px solid #555; z-index: 100; transition: 0.4s; font-size: calc(13px * var(--font-scale)); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .pos-top { top: 8%; left: 50%; transform: translateX(-50%); } 
+        .pos-left { left: 3%; top: 35%; transform: translateY(-50%); } 
+        .pos-right { right: 3%; top: 35%; transform: translateY(-50%); }
+        
+        /* CHENAR JUCĂTOR - FIX ELASTICITATE */
+        #my-player-zone {
+            position: absolute; 
+            bottom: max(20px, 4vh); 
+            left: 50%; transform: translateX(-50%);
+            /* MODIFICAT: Width auto și fit-content pentru a crește cu cărțile */
+            width: auto; 
+            width: fit-content;
+            min-width: 320px; /* Lățime minimă decentă */
+            max-width: 98vw; /* Să nu iasă din ecran */
+            
+            background: rgba(0,0,0,0.4); 
+            border: 2px solid #555;
+            border-radius: 20px;
+            /* MODIFICAT: Padding mai mare pentru relaxare */
+            padding: 10px 25px; 
+            
+            display: none; 
+            flex-direction: column; align-items: center;
+            transition: all 0.3s ease;
+            z-index: 200;
+        }
+
+        .active-turn { 
+            border-color: var(--active) !important; 
+            box-shadow: 0 0 25px var(--active); 
+            background: rgba(0,0,0,0.8) !important; 
+            z-index: 210 !important;
+        }
+        
+        .pos-left.active-turn, .pos-right.active-turn { transform: translateY(-50%) scale(1.1); }
+        .pos-top.active-turn { transform: translateX(-50%) scale(1.1); }
+        #my-player-zone.active-turn { transform: translateX(-50%) scale(1.02); }
+
+        .player-header {
+            width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5px; box-sizing: border-box;
+            color: #ddd; font-weight: bold; font-size: calc(14px * var(--font-scale));
+            margin-bottom: 8px; /* Spațiu între text și cărți */
+            text-shadow: 1px 1px 2px black;
+            white-space: nowrap; /* Să nu se rupă textul */
+        }
+
+        .timer-badge {
+            background: #e74c3c; color: white; 
+            padding: 2px 8px; border-radius: 8px;
+            font-weight: bold; font-size: calc(14px * var(--font-scale));
+            animation: pulse 1s infinite alternate;
+            margin-left: 5px;
+            display: inline-block;
+        }
+        @keyframes pulse { from { opacity: 0.8; } to { opacity: 1; box-shadow: 0 0 10px #e74c3c; } }
+
+        .mini-cards-container { display:flex; gap:2px; justify-content:center; margin-top:4px; height: 26px; }
+        .card-mini { width: 16px; height: 24px; background: linear-gradient(135deg, #c0392b 0%, #7e1910 100%); border: 1px solid white; border-radius: 3px; box-shadow: 1px 1px 3px black; }
+
+        .card { 
+            width: var(--card-w); height: var(--card-h); 
+            background: white; border-radius: 8px; 
+            display: flex; justify-content: center; align-items: center; 
+            font-weight: bold; font-size: calc(4vh * var(--font-scale)); 
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.6); 
+            position: relative; transition: transform 0.2s; user-select: none; cursor: grab;
+            overflow: hidden; 
+            flex-shrink: 0; /* IMPEDICĂ STRIVIREA CĂRȚILOR */
+        }
+        .card.back { background: linear-gradient(135deg, #c0392b 0%, #7e1910 100%); border: 2px solid white; color: transparent !important; cursor: default; }
+        .card.absolute { position: absolute !important; }
+        .card.selected { transform: translateY(-25px) !important; border: 3px solid var(--active); z-index: 1000; box-shadow: 0 0 15px var(--active); }
+        .card.locked { opacity: 0.6; filter: grayscale(0.8); border: 2px solid #e74c3c; cursor: not-allowed; }
+        .card.dragging { opacity: 0.5; border: 2px dashed #fff; transform: scale(1.1); }
+        .card.rejected-card { opacity: 0.8; filter: grayscale(0.5); pointer-events: none; border: 2px solid #555; }
+        
+        .suit-red { color: #e74c3c !important; }
+        .suit-black { color: black !important; }
+        .card .pts { position: absolute; bottom: 4px; font-size: 0.35em; color: #3498db; width: 100%; text-align: center; font-weight: normal; }
+
+        .action-btn { position: absolute; bottom: 35%; z-index: 300; color:white; padding:12px 24px; border:none; border-radius:30px; font-weight:bold; cursor:pointer; font-size: calc(15px * var(--font-scale)); box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
+        .btn-hart { left: 10%; background:#e74c3c; }
+        .btn-play { right: 10%; background:#27ae60; }
+        .draw-btn { background:#f39c12; color:white; font-size: calc(12px * var(--font-scale)); margin-top:8px; border:none; padding:8px 16px; border-radius:15px; cursor:pointer; font-weight: bold; box-shadow: 0 2px 5px black; }
+        .draw-btn:disabled, .action-btn:disabled { opacity: 0.4; filter: grayscale(1); transform: scale(0.95); }
+
+        .hand-cards { 
+            display: flex; 
+            gap: -5px; 
+            height: 17vh; 
+            align-items: flex-end; 
+            justify-content: center; 
+            /* MODIFICAT: Width auto pentru a lăsa cărțile să dicteze lățimea */
+            width: auto;
+            min-width: 100%; 
+        }
+        .hand-cards .card { width: 12vh; height: 17vh; font-size: calc(6vh * var(--font-scale)); cursor: pointer; border: 1px solid #ccc; }
+
+        .deck-count { position: absolute; top: -25px; width: 100%; text-align: center; font-size: calc(13px * var(--font-scale)); font-weight: bold; color: white; background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 10px; }
+        .mult-badge { position: absolute; top: -12px; right: -12px; background: var(--gold); color: black; border-radius: 50%; width: 28px; height: 28px; display: none; justify-content: center; align-items: center; font-weight: bold; border: 2px solid #000; z-index: 120; }
+
+        .result-card { display: inline-flex; width: 18px; height: 26px; background: white; border-radius: 3px; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; margin-right: 2px; border: 1px solid #999; vertical-align: middle; }
+
+        #hart-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:4000; justify-content:center; align-items:center; }
+        #modal-box { background:#1a1a1a; padding:25px; border:3px solid var(--gold); border-radius:25px; text-align:center; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; }
+        #msg { font-size: calc(26px * var(--font-scale)); text-shadow: 0 2px 4px black; margin-bottom: 5px; position:absolute; top: 12%; width:100%; text-align:center; z-index:1600; pointer-events:none; }
+        #setup-layer { position: absolute; inset:0; z-index:1500; display:none; pointer-events:auto; }
+        
+        .flying-card { position: fixed; z-index: 9999; transition: all 0.6s ease-in-out; box-shadow: 0 10px 30px rgba(0,0,0,0.8); pointer-events: none; }
+        #rejected-pile-container { position: absolute; top: 35%; left: 25%; width: var(--card-w); height: var(--card-h); pointer-events: none; z-index: 10; transform: rotate(-15deg); }
+
+        #staging-area { position: absolute; bottom: 0; left: 120%; width: var(--card-w); height: var(--card-h); display: none; justify-content: center; align-items: center; }
+        #staging-card { position: absolute; top:0; left:0; transform: rotate(5deg); border: 2px solid var(--gold); }
+    </style>
+</head>
+<body>
+
+<div id="portrait-warning">
+    <h1 style="color: var(--gold)">ROTEȘTE TELEFONUL</h1>
+    <div style="font-size: 40px; margin-top:20px;">🔄</div>
+</div>
+
+<div id="main-menu">
+    <div class="menu-card">
+        <h1>HART MOBILE</h1>
+        <div class="setting-row">
+            <span>Mărime Text:</span>
+            <div class="font-control-container">
+                <button class="font-btn" onclick="adjustFont(-1)">-</button>
+                <span id="font-label">Normal</span>
+                <button class="font-btn" onclick="adjustFont(1)">+</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <span>Timer (sec):</span>
+            <select id="cfg-timer">
+                <option value="15">15s</option>
+                <option value="30" selected>30s</option>
+                <option value="60">60s</option>
+                <option value="0">Fără</option>
+            </select>
+        </div>
+        <div class="setting-row"><span>Minim Atu:</span><select id="cfg-min-trump"><option value="0">Toate</option><option value="4">Minim 5</option><option value="9">Minim 10</option></select></div>
+        <div class="setting-row"><span>Scor Maxim:</span><input type="number" id="cfg-win-pts" value="300"></div>
+        <button class="start-btn" onclick="initGameSession()">JOACĂ ACUM</button>
+    </div>
+</div>
+
+<div class="game-wrapper">
+    <div id="msg" style="color: var(--gold); font-weight: bold;"></div>
+    
+    <div id="table-ui" class="table">
+        <div id="setup-layer"></div>
+        <div id="rejected-pile-container"></div>
+        
+        <button id="hart-btn" class="action-btn btn-hart" style="display:none" onclick="triggerHart(0)">HART</button>
+        <button id="play-btn" class="action-btn btn-play" style="display:none" onclick="handlePlay()">DA JOS</button>
+        
+        <div id="play-area" style="display:none; flex-direction:column; align-items:center; gap:5px;">
+            <div style="width: var(--card-w); height: var(--card-h); border: 2px dashed rgba(255,255,255,0.2); border-radius: 8px; position: relative; display: flex; justify-content: center; align-items: center;">
+                <span style="position:absolute; top:-20px; font-size:11px; color:var(--gold); font-weight:bold; letter-spacing:1px;">ATU</span>
+                <div id="trump-ui" class="card absolute" style="position:relative"></div>
+            </div>
+            <div style="display:flex; gap:40px; align-items:flex-end; margin-top:15px;">
+                <div style="text-align:center; position:relative;">
+                    <div id="deck-counter" class="deck-count">0</div>
+                    <div id="deck-ui" class="card back absolute" style="position:relative" onclick="handleDraw(false)"></div>
+                    <button id="btn-draw-top" class="draw-btn" onclick="handleDraw(false)">DE SUS</button>
+                </div>
+                
+                <div id="bottom-container" style="text-align:center; position:relative;">
+                    <div id="bottom-ui" class="card absolute" style="position:relative" onclick="handleDraw(true)"></div>
+                    <div id="mult-badge" class="mult-badge">x1</div>
+                    <button id="btn-draw-bottom" class="draw-btn" onclick="handleDraw(true)">DE JOS</button>
+                    <div id="staging-area">
+                        <div id="staging-card" class="card"></div>
+                        <div id="staging-badge" class="mult-badge">x1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="my-player-zone">
+            <div class="player-header">
+                <span id="player-name-disp">Tu</span>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <span>Scor: <span id="player-score-disp">0</span></span>
+                    <span id="player-timer-slot"></span> 
+                </div>
+            </div>
+            <div id="hand-cards-row" class="hand-cards"></div>
+        </div>
+
+    </div>
+</div>
+
+<div id="hart-modal">
+    <div id="modal-box">
+        <h2 id="modal-title" style="color:var(--gold); margin-top:0;">REZULTATE</h2>
+        <div id="modal-body" style="font-size: calc(15px * var(--font-scale)); line-height:1.5; margin:20px 0; color:white; text-align:left;"></div>
+        <button id="next-btn" onclick="prepareNextRound()" class="start-btn">URMĂTOAREA RUNDĂ</button>
+    </div>
+</div>
+
+<script>
+    const VALS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'], SUITS = ['♥','♦','♣','♠'];
+    let CONFIG = { direction: 1, minTrumpIdx: 0, winPoints: 300, moveTimerLimit: 30, revealTime: 4000, botDelay: 1500 };
+    let players = [
+        { id: 0, n: 'Tu', score: 0, hand: [], pos: 'pos-bottom', isBot: false },
+        { id: 1, n: 'Gambler', score: 0, hand: [], pos: 'pos-left', isBot: true },
+        { id: 2, n: 'Strateg', score: 0, hand: [], pos: 'pos-top', isBot: true },
+        { id: 3, n: 'Andrei', score: 0, hand: [], pos: 'pos-right', isBot: true }
+    ];
+    let dealerId = -1, trumpCard = null, masterDeck = [], discardStack = [], turnIdx = 0, selectedIds = [], hasPlayed = false, hasDrawn = false, moveInterval = null, timeLeft = 0, lastPlayCount = 1;
+    let pendingDiscard = [];
+    let draggedItemIndex = null, lobbyInterval = null;
+    let currentFontIndex = 1; 
+    const fontSizes = [ { label: 'Mic', scale: 0.85 }, { label: 'Normal', scale: 1.0 }, { label: 'Mare', scale: 1.3 }, { label: 'Gigant', scale: 1.6 } ];
+
+    function adjustFont(dir) {
+        currentFontIndex += dir;
+        if(currentFontIndex < 0) currentFontIndex = 0;
+        if(currentFontIndex >= fontSizes.length) currentFontIndex = fontSizes.length-1;
+        updateFontUI();
+    }
+    function updateFontUI() {
+        document.getElementById('font-label').innerText = fontSizes[currentFontIndex].label;
+        document.documentElement.style.setProperty('--font-scale', fontSizes[currentFontIndex].scale);
+    }
+    window.onload = updateFontUI;
+
+    function initGameSession() {
+        CONFIG.moveTimerLimit = parseInt(document.getElementById('cfg-timer').value);
+        CONFIG.minTrumpIdx = parseInt(document.getElementById('cfg-min-trump').value);
+        CONFIG.winPoints = parseInt(document.getElementById('cfg-win-pts').value) || 300;
+        document.getElementById('main-menu').style.display = 'none';
+        players.forEach(p => p.hand = []);
+        renderSeats(); 
+        startDealerScatter();
+    }
+
+    function render() {
+        renderSeats();
+        
+        const tUI = document.getElementById('trump-ui');
+        if(trumpCard) {
+            tUI.innerHTML = `${trumpCard.v}${trumpCard.s}`;
+            applyColor(tUI, trumpCard);
+        } else tUI.innerHTML = '';
+        document.getElementById('deck-counter').innerText = `${masterDeck.length}`;
+        const bUI = document.getElementById('bottom-ui');
+        const badge = document.getElementById('mult-badge');
+        if(discardStack.length > 0) {
+            const top = discardStack[discardStack.length-1];
+            bUI.style.visibility = 'visible'; 
+            bUI.innerHTML = `${top.v}${top.s}`;
+            applyColor(bUI, top); 
+            if(lastPlayCount > 1) { badge.innerText = `x${lastPlayCount}`; badge.style.display = 'flex'; } 
+            else badge.style.display = 'none';
+        } else {
+            bUI.style.visibility = 'hidden'; badge.style.display = 'none';
+        }
+
+        const stagingArea = document.getElementById('staging-area');
+        const stagingCard = document.getElementById('staging-card');
+        const stagingBadge = document.getElementById('staging-badge');
+        if(pendingDiscard.length > 0) {
+            stagingArea.style.display = 'flex';
+            const topStaged = pendingDiscard[pendingDiscard.length-1];
+            stagingCard.innerHTML = `${topStaged.v}${topStaged.s}`;
+            applyColor(stagingCard, topStaged);
+            if(pendingDiscard.length > 1) {
+                stagingBadge.innerText = `x${pendingDiscard.length}`;
+                stagingBadge.style.display = 'flex';
+            } else {
+                stagingBadge.style.display = 'none';
+            }
+        } else {
+            stagingArea.style.display = 'none';
+        }
+
+        // RENDER JUCĂTOR
+        const pZone = document.getElementById('my-player-zone');
+        if(turnIdx === 0) pZone.classList.add('active-turn');
+        else pZone.classList.remove('active-turn');
+
+        document.getElementById('player-score-disp').innerText = players[0].score;
+
+        const pTimerSlot = document.getElementById('player-timer-slot');
+        if(turnIdx === 0 && CONFIG.moveTimerLimit > 0) {
+            pTimerSlot.innerHTML = `<div class="timer-badge timer-val">00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}</div>`;
+        } else {
+            pTimerSlot.innerHTML = '';
+        }
+
+        const row = document.getElementById('hand-cards-row'); row.innerHTML = '';
+        players[0].hand.forEach((c, index) => {
+            const d = document.createElement('div');
+            d.className = `card ${selectedIds.includes(c.id)?'selected':''} ${c.lockedInTurn ? 'locked' : ''}`;
+            applyColor(d, c);
+            d.innerHTML = `${c.v}${c.s} <div class="pts">${getPts(c)}p</div>`;
+            if(c.lockedInTurn) d.innerHTML += `<div style="position:absolute; top:-5px; right:-5px">🔒</div>`;
+            d.setAttribute('draggable', true);
+            d.addEventListener('dragstart', (e) => handleDragStart(e, index));
+            d.addEventListener('dragover', handleDragOver);
+            d.addEventListener('drop', (e) => handleDrop(e, index));
+            d.addEventListener('dragend', handleDragEnd);
+            d.onclick = () => toggleSelection(c.id);
+            row.appendChild(d);
+        });
+
+        const pBtn = document.getElementById('play-btn');
+        pBtn.disabled = (selectedIds.length === 0 || hasPlayed || players[turnIdx].isBot);
+        const hBtn = document.getElementById('hart-btn');
+        if(turnIdx === 0 && !hasPlayed && !hasDrawn && !players[0].isBot) {
+            hBtn.disabled = false; hBtn.style.opacity = '1';
+        } else {
+            hBtn.disabled = true; hBtn.style.opacity = '0.5';
+        }
+    }
+
+    function applyColor(el, c) {
+        el.classList.remove('suit-red', 'suit-black');
+        if(['♥','♦'].includes(c.s)) el.classList.add('suit-red');
+        else el.classList.add('suit-black');
+    }
+
+    function startTurn() { 
+        clearInterval(moveInterval); 
+        
+        pendingDiscard = []; 
+        const p = players[turnIdx]; 
+        
+        renderSeats(); 
+        render(); 
+
+        if(!p.isBot) {
+            document.getElementById('msg').innerText = "TURA TA - DA JOS!";
+            startTurnTimer();
+        } else {
+            document.getElementById('msg').innerText = `JOACĂ ${p.n.toUpperCase()}`;
+            startTurnTimer();
+        }
+        hasPlayed = false; 
+        hasDrawn = false; 
+        players.forEach(pl => pl.hand.forEach(c => c.lockedInTurn = false)); 
+        toggleDrawButtons(false); 
+        
+        if(p.isBot) setTimeout(botMovePhase1, CONFIG.botDelay); 
+    }
+
+    function startTurnTimer() {
+        if(CONFIG.moveTimerLimit === 0) return;
+        timeLeft = CONFIG.moveTimerLimit;
+        
+        updateTimerVisuals();
+
+        moveInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerVisuals();
+            
+            if(timeLeft <= 0) {
+                clearInterval(moveInterval);
+                handleTimeout();
+            }
+        }, 1000);
+    }
+
+    function updateTimerVisuals() {
+        const str = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+        const activeEl = document.querySelector('.active-turn .timer-val');
+        if(activeEl) {
+            activeEl.innerText = str;
+        } else {
+            if(turnIdx === 0) render(); 
+            else renderSeats();
+        }
+    }
+
+    function handlePlay() { 
+        const set = players[0].hand.filter(c => selectedIds.includes(c.id)); 
+        if(set.length === 0) return; 
+        pendingDiscard = [...set];
+        players[0].hand = players[0].hand.filter(c => !selectedIds.includes(c.id)); 
+        selectedIds = []; 
+        hasPlayed = true; 
+        toggleDrawButtons(true);
+        document.getElementById('msg').innerText = "ACUM TRAGE O CARTE";
+        render(); 
+    }
+
+    function handleDraw(isBottom) { 
+        if(!hasPlayed && players[turnIdx].hand.length > 0) return; 
+        if(hasDrawn) return; 
+        let nC; 
+        if(isBottom && discardStack.length > 0) { 
+            nC = discardStack.pop(); 
+            pickAnimation(nC, 0, true); 
+            nC.lockedInTurn = true; 
+        } else { 
+            if(masterDeck.length === 0) { 
+                if(discardStack.length > 1) { 
+                    const t = discardStack.pop(); 
+                    masterDeck = discardStack.reverse(); 
+                    discardStack = [t]; 
+                } 
+            } 
+            nC = masterDeck.shift(); 
+            pickAnimation(nC, 0, false);
+        } 
+        players[0].hand.push(nC); 
+        hasDrawn = true; 
+        toggleDrawButtons(false); 
+        finalizeTurnWithAnimation();
+    }
+
+    function finalizeTurnWithAnimation() {
+        if(pendingDiscard.length === 0) {
+            setTimeout(endTurn, 600);
+            return;
+        }
+        const stagingEl = document.getElementById('staging-card');
+        const targetEl = document.getElementById('bottom-ui');
+        const flying = stagingEl.cloneNode(true);
+        flying.className = 'card flying-card';
+        flying.style.transform = 'rotate(0deg)'; 
+        const startRect = stagingEl.getBoundingClientRect();
+        const endRect = targetEl.getBoundingClientRect();
+        flying.style.left = startRect.left + 'px';
+        flying.style.top = startRect.top + 'px';
+        document.body.appendChild(flying);
+        document.getElementById('staging-area').style.display = 'none';
+        requestAnimationFrame(() => {
+            flying.style.left = endRect.left + 'px';
+            flying.style.top = endRect.top + 'px';
+            flying.style.transform = 'scale(1.0)'; 
+        });
+        setTimeout(() => {
+            flying.remove();
+            lastPlayCount = pendingDiscard.length;
+            discardStack.push(...pendingDiscard);
+            pendingDiscard = [];
+            render(); 
+            endTurn();
+        }, 600);
+    }
+
+    function pickAnimation(card, pIdx, fromBottom) {
+        const flying = document.createElement('div');
+        flying.className = `card flying-card`;
+        let startRect;
+        if(fromBottom) {
+            const bUI = document.getElementById('bottom-ui');
+            startRect = bUI.offsetParent ? bUI.getBoundingClientRect() : document.getElementById('bottom-container').getBoundingClientRect();
+        } else {
+            const dUI = document.getElementById('deck-ui');
+            startRect = dUI ? dUI.getBoundingClientRect() : document.getElementById('deck-counter').getBoundingClientRect();
+        }
+        flying.style.left = startRect.left + 'px';
+        flying.style.top = startRect.top + 'px';
+        flying.innerHTML = (pIdx === 0 || fromBottom) ? `${card.v}${card.s}` : ''; 
+        if(flying.innerHTML) applyColor(flying, card);
+        else flying.classList.add('back');
+        document.body.appendChild(flying);
+        const targetClass = pIdx === 0 ? 'player-header' : players[pIdx].pos; 
+        const targetEl = document.querySelector(pIdx === 0 ? '#my-player-zone' : `.${targetClass}`);
+        
+        const targetRect = targetEl.getBoundingClientRect();
+        requestAnimationFrame(() => {
+            flying.style.left = (targetRect.left + (pIdx===0? 100 : 20)) + 'px';
+            flying.style.top = (targetRect.top + (pIdx===0? 50 : 10)) + 'px';
+            if(pIdx === 0) setTimeout(() => flying.remove(), 600);
+            else {
+                if(fromBottom) {
+                    flying.style.transform = "scale(1.2)";
+                    setTimeout(() => flying.remove(), CONFIG.revealTime); 
+                } else setTimeout(() => flying.remove(), 600);
+            }
+        });
+    }
+
+    function botMovePhase1() {
+        const b = players[turnIdx];
+        if(b.hand.reduce((s,c)=>s+getPts(c),0) <= 5 && masterDeck.length < 20) {
+            triggerHart(turnIdx);
+            return;
+        }
+        let gr = {}; 
+        b.hand.forEach(c => { gr[c.v] = (gr[c.v]||[]); gr[c.v].push(c); }); 
+        let best = Object.keys(gr).sort((a,b) => (gr[b].length*getPts(gr[b][0]))-(gr[a].length*getPts(gr[a][0])))[0]; 
+        let toPlay = gr[best];
+        if(toPlay) {
+            pendingDiscard = [...toPlay];
+            b.hand = b.hand.filter(c => !toPlay.includes(c));
+        } else {
+            const biggest = b.hand.sort((a,b)=>getPts(b)-getPts(a))[0];
+            pendingDiscard = [biggest];
+            b.hand = b.hand.filter(c => c.id !== biggest.id);
+        }
+        render(); 
+        setTimeout(botMovePhase2, 1000);
+    }
+
+    function botMovePhase2() {
+        const b = players[turnIdx];
+        let takeBottom = false; 
+        
+        if(discardStack.length > 0) { 
+            const top = discardStack[discardStack.length-1]; 
+            const isSmall = ['A','2','3'].includes(top.v);
+            const pair = b.hand.some(c => c.v === top.v); 
+            if(pair || isSmall) takeBottom = true; 
+        } 
+        
+        let nC;
+        if(takeBottom) { 
+            nC = discardStack.pop(); 
+            pickAnimation(nC, turnIdx, true); 
+            nC.lockedInTurn = true; 
+        } else { 
+            if(masterDeck.length === 0) { 
+                const l = discardStack.pop(); 
+                masterDeck = discardStack.reverse(); 
+                discardStack = [l]; 
+            } 
+            nC = masterDeck.shift(); 
+            pickAnimation(nC, turnIdx, false); 
+        } 
+        
+        b.hand.push(nC);
+        setTimeout(() => {
+            finalizeTurnWithAnimation();
+        }, (takeBottom ? CONFIG.revealTime : 800));
+    }
+
+    function handleDragStart(e, index) { draggedItemIndex = index; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+    function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+    function handleDrop(e, targetIndex) { e.preventDefault(); if (draggedItemIndex === null || draggedItemIndex === targetIndex) return; const hand = players[0].hand; const [movedItem] = hand.splice(draggedItemIndex, 1); hand.splice(targetIndex, 0, movedItem); render(); }
+    function handleDragEnd(e) { e.target.classList.remove('dragging'); draggedItemIndex = null; }
+    function toggleSelection(id) { 
+        if(hasPlayed) return;
+        if(!players[0].hand.find(c => c.id === id)) return; 
+        const i = selectedIds.indexOf(id); 
+        if(i > -1) selectedIds.splice(i, 1); 
+        else { 
+            const c = players[0].hand.find(x => x.id === id); 
+            if(selectedIds.length > 0 && players[0].hand.find(x => x.id === selectedIds[0]).v !== c.v) return; 
+            if(!c.lockedInTurn) selectedIds.push(id); 
+        } 
+        render(); 
+    }
+    
+    function handleTimeout() { 
+        if(turnIdx===0){ 
+            if(!hasPlayed) {
+                if(selectedIds.length===0){ 
+                    const s=[...players[0].hand].sort((a,b)=>getPts(b)-getPts(a)); 
+                    selectedIds=[s[0].id]; 
+                } 
+                handlePlay(); 
+                setTimeout(() => handleDraw(false), 500);
+            } else if(!hasDrawn) {
+                handleDraw(false);
+            }
+        } 
+    }
+    function endTurn() { turnIdx = (turnIdx + CONFIG.direction + 4) % 4; startTurn(); }
+    function toggleDrawButtons(e) { document.getElementById('btn-draw-top').disabled = !e; document.getElementById('btn-draw-bottom').disabled = !e || discardStack.length === 0; }
+    
+    function renderSeats() { 
+        document.querySelectorAll('.player-seat').forEach(e => e.remove()); 
+        players.forEach((p, idx) => { 
+            if (idx === 0) return; 
+            
+            const s = document.createElement('div'); 
+            s.className = `player-seat ${p.pos} ${turnIdx === idx ? 'active-turn' : ''}`; 
+            
+            let timerHTML = '';
+            if(turnIdx === idx && CONFIG.moveTimerLimit > 0) {
+                timerHTML = `<div class="timer-badge timer-val">00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}</div>`;
+            }
+
+            s.innerHTML = `<b>${p.n}</b> ${timerHTML}<br><small>T: ${p.score}</small>`; 
+            
+            if (p.hand.length > 0) { 
+                let h = `<div class="mini-cards-container">`; 
+                p.hand.forEach(() => h += `<div class="card-mini"></div>`); 
+                s.innerHTML += h + `</div>`; 
+            } 
+            document.getElementById('table-ui').appendChild(s); 
+        }); 
+    }
+    
+    function generateNewDeck() { let d = []; SUITS.forEach(s => VALS.forEach(v => d.push({ v, s, id: Math.random(), lockedInTurn: false }))); return d.sort(() => Math.random() - 0.5); }
+    function getPts(c) { if (!c) return 0; if (trumpCard && c.v === trumpCard.v) return 0; if (c.v === 'A') return 1; if (['J','Q','K'].includes(c.v)) return 10; return parseInt(c.v); }
+    
+    function startDealerScatter() { 
+        document.getElementById('msg').innerText = "ALEGE DEALER"; 
+        document.getElementById('rejected-pile-container').innerHTML = '';
+        renderSeats(); 
+        const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; 
+        masterDeck = generateNewDeck(); 
+        let temp = [...masterDeck].sort(() => Math.random() - 0.5); 
+        for (let i = 0; i < 52; i++) { 
+            const c = document.createElement('div'); c.className = 'card back absolute'; 
+            c.style.left = '50%'; c.style.top = '50%'; 
+            area.appendChild(c); 
+            setTimeout(() => { 
+                c.style.left = (Math.random() * 80 + 10) + '%'; 
+                c.style.top = (Math.random() * 60 + 20) + '%'; 
+                c.style.transform = `rotate(${Math.random() * 360}deg)`; 
+            }, i * 10); 
+            c.onclick = () => revealDealer(temp, i); 
+        } 
+    }
+    
+    function revealDealer(deck, idx) { 
+        document.getElementById('setup-layer').style.pointerEvents = 'none'; 
+        let res = players.map((p, i) => ({ p, card: deck[(idx + i * 7) % 52], val: VALS.indexOf(deck[(idx + i * 7) % 52].v) })); 
+        res.forEach(r => { 
+            const c = document.createElement('div'); c.className = 'card absolute'; 
+            applyColor(c, r.card); c.innerHTML = `${r.card.v}${r.card.s}`; 
+            c.style.left = '50%'; c.style.top = '50%'; 
+            document.getElementById('setup-layer').appendChild(c); 
+            setTimeout(() => { 
+                let targetEl;
+                if(r.p.id === 0) targetEl = document.getElementById('my-player-zone'); 
+                else targetEl = document.querySelector(`.${r.p.pos}`); 
+
+                let rect;
+                if(r.p.id === 0 && (!targetEl || targetEl.style.display === 'none')) {
+                     rect = { left: window.innerWidth / 2 - 50, top: window.innerHeight - 100 };
+                } else {
+                     rect = targetEl.getBoundingClientRect();
+                }
+
+                const tRect = document.getElementById('table-ui').getBoundingClientRect(); 
+                c.style.left = (rect.left - tRect.left + 20) + 'px'; 
+                c.style.top = (rect.top - tRect.top + 10) + 'px'; 
+                c.style.transform = 'rotate(0deg)'; 
+            }, 100); 
+        }); 
+        dealerId = res.sort((a, b) => b.val - a.val)[0].p.id; 
+        setTimeout(startTrumpFan, 2500); 
+    }
+    
+    function startTrumpFan() { 
+        players.forEach(p => p.hand = []);
+        renderSeats();
+        document.getElementById('rejected-pile-container').innerHTML = '';
+
+        const area = document.getElementById('setup-layer'); area.innerHTML = ''; area.style.display = 'block'; area.style.pointerEvents = 'auto'; 
+        const sel = players[(dealerId + 1 + 4) % 4]; 
+        document.getElementById('msg').innerText = `${sel.n.toUpperCase()} ALEGE ATU`; 
+        masterDeck = generateNewDeck(); 
+        for (let i = 0; i < 52; i++) { 
+            const c = document.createElement('div'); c.className = 'card back absolute'; 
+            c.style.left = (5 + i * 1.7) + '%'; c.style.top = '45%'; c.style.zIndex = 2000 + i; 
+            c.onclick = (e) => { 
+                e.stopPropagation(); 
+                if (!sel.isBot) finalizeTrump(masterDeck[i], c, i); 
+            }; 
+            area.appendChild(c); 
+        } 
+        if (sel.isBot) { 
+            const botPick = () => { 
+                let r = Math.floor(Math.random() * 52); 
+                if (VALS.indexOf(masterDeck[r].v) < CONFIG.minTrumpIdx) {
+                    finalizeTrump(masterDeck[r], area.children[r], r);
+                    setTimeout(botPick, 1000); 
+                }
+                else finalizeTrump(masterDeck[r], area.children[r], r); 
+            }; 
+            setTimeout(botPick, 1500); 
+        } 
+    }
+    
+    function finalizeTrump(card, el, idx) { 
+        if (VALS.indexOf(card.v) < CONFIG.minTrumpIdx) { 
+            document.getElementById('msg').innerText = "PREA MICĂ!"; 
+            applyColor(el, card); el.innerHTML = `${card.v}${card.s}`; el.classList.remove('back'); el.classList.add('rejected-card');
+            const rejContainer = document.getElementById('rejected-pile-container');
+            const clone = el.cloneNode(true);
+            clone.style.position = 'absolute'; clone.style.left = '0'; clone.style.top = '0'; clone.style.zIndex = 100 + rejContainer.children.length; clone.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+            el.style.opacity = '0'; el.style.pointerEvents = 'none';
+            rejContainer.appendChild(clone);
+            masterDeck[idx] = null; 
+            return; 
+        } 
+        trumpCard = card; 
+        masterDeck[idx] = null; 
+        masterDeck = masterDeck.filter(c => c !== null); 
+        el.className = 'card absolute'; el.innerHTML = `${card.v}${card.s}`; applyColor(el, card); el.style.transform = 'scale(1.2)'; el.style.left = '45%'; el.style.top = '35%'; el.style.zIndex = '3000'; 
+        setTimeout(dealCards, 1500); 
+    }
+    
+    function dealCards() { 
+        document.getElementById('setup-layer').style.display = 'none'; 
+        document.getElementById('rejected-pile-container').innerHTML = '';
+        
+        document.getElementById('my-player-zone').style.display = 'flex';
+
+        masterDeck = masterDeck.filter(c => c !== null);
+        players.forEach(p => p.hand = masterDeck.splice(0, 5)); 
+        discardStack = [masterDeck.shift()]; 
+        document.getElementById('play-area').style.display = 'flex'; 
+        
+        document.getElementById('hart-btn').style.display = 'block'; 
+        document.getElementById('play-btn').style.display = 'block'; 
+        turnIdx = (dealerId + 1 + 4) % 4; 
+        startTurn(); 
+    }
+
+    function triggerHart(idx) {
+        clearInterval(moveInterval);
+        const caller = players[idx];
+        const resList = players.map(p => ({ n: p.n, pts: p.hand.reduce((s, c) => s + getPts(c), 0) }));
+        const othersMin = Math.min(...resList.filter((_, i) => i !== idx).map(r => r.pts));
+        const success = caller.hand.reduce((s, c) => s + getPts(c), 0) < othersMin;
+        
+        let report = `<div style="font-size:calc(20px * var(--font-scale)); margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
+                        <b>${caller.n}</b> strigă HART!<br>
+                        <span style="color:${success ? '#27ae60' : '#e74c3c'}">${success ? 'REUȘIT!' : 'EȘUAT! (+50p)'}</span>
+                      </div>
+                      <table style="width:100%; border-collapse:collapse; font-size:calc(13px * var(--font-scale));">
+                      <tr style="color:#aaa; border-bottom:1px solid #444;">
+                        <th style="text-align:left; padding:5px;">Jucător</th>
+                        <th style="text-align:center;">Cărți Rămase</th>
+                        <th style="text-align:right;">Mână</th>
+                        <th style="text-align:right;">Pen.</th>
+                        <th style="text-align:right;">Total</th>
+                      </tr>`;
+        
+        let matchWinner = null;
+        resList.forEach((r, i) => {
+            let penalty = 0;
+            if (success) { penalty = (i === idx) ? 0 : r.pts; } 
+            else { if (i === idx) penalty = 50; else penalty = r.pts; }
+            players[i].score += penalty;
+            if (players[i].score >= CONFIG.winPoints) matchWinner = true;
+            
+            let handHTML = '';
+            players[i].hand.forEach(c => {
+                const isRed = ['♥','♦'].includes(c.s);
+                handHTML += `<div class="result-card ${isRed ? 'suit-red' : 'suit-black'}">${c.v}${c.s}</div>`;
+            });
+            if(handHTML === '') handHTML = '<span style="color:#555">-</span>';
+
+            report += `<tr>
+                        <td style="text-align:left; padding:5px; white-space:nowrap;">${r.n}</td>
+                        <td style="text-align:center; padding:2px;">${handHTML}</td>
+                        <td style="text-align:right; color:#ddd;">${r.pts}</td>
+                        <td style="text-align:right; color:${penalty > 0 ? '#e74c3c' : '#27ae60'}">+${penalty}</td>
+                        <td style="text-align:right; font-weight:bold;">${players[i].score}</td>
+                       </tr>`;
+        });
+        report += `</table>`;
+        
+        const nextBtn = document.getElementById('next-btn');
+        if (matchWinner) {
+            const sorted = [...players].sort((a, b) => a.score - b.score);
+            report = `<h2 style="color:var(--gold)">🏆 CAMPION: ${sorted[0].n}</h2>` + report;
+            nextBtn.innerText = "MECI NOU";
+            nextBtn.onclick = () => location.reload();
+        } else {
+            nextBtn.onclick = prepareNextRound;
+            if (CONFIG.moveTimerLimit > 0) {
+                let lobbyTime = CONFIG.moveTimerLimit;
+                nextBtn.innerText = `URMĂTOAREA RUNDĂ (${lobbyTime})`;
+                lobbyInterval = setInterval(() => {
+                    lobbyTime--;
+                    nextBtn.innerText = `URMĂTOAREA RUNDĂ (${lobbyTime})`;
+                    if (lobbyTime <= 0) {
+                        prepareNextRound();
+                    }
+                }, 1000);
+            } else {
+                nextBtn.innerText = "URMĂTOAREA RUNDĂ";
+            }
+        }
+        
+        document.getElementById('modal-body').innerHTML = report;
+        document.getElementById('hart-modal').style.display = 'flex';
+    }
+
+    function prepareNextRound() { 
+        clearInterval(lobbyInterval); 
+        document.getElementById('hart-modal').style.display = 'none'; 
+        document.getElementById('rejected-pile-container').innerHTML = '';
+        dealerId = (dealerId + 1 + 4) % 4; 
+        startTrumpFan(); 
+    }
+</script>
+</body>
+</html>
